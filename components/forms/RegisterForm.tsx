@@ -1,9 +1,13 @@
 "use client";
 
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { registrationSchema, type RegistrationInput } from "@/lib/schemas";
+import { Turnstile, type TurnstileInstance } from "@marsidev/react-turnstile";
+import {
+  registrationSchema,
+  type RegistrationInput,
+} from "@/lib/schemas";
 import { motion, AnimatePresence } from "framer-motion";
 import { cn } from "@/lib/utils";
 
@@ -15,9 +19,12 @@ type Status =
 
 const DISCORD =
   process.env.NEXT_PUBLIC_DISCORD_INVITE ?? "https://discord.gg/cMkdZQGCSE";
+const TURNSTILE_SITE_KEY = process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY;
 
 export function RegisterForm() {
   const [status, setStatus] = useState<Status>({ kind: "idle" });
+  const [turnstileToken, setTurnstileToken] = useState<string | null>(null);
+  const turnstileRef = useRef<TurnstileInstance | null>(null);
 
   const {
     register,
@@ -40,15 +47,31 @@ export function RegisterForm() {
   });
 
   async function onSubmit(values: RegistrationInput) {
+    if (!turnstileToken) {
+      setStatus({
+        kind: "error",
+        message: "Please complete the verification challenge.",
+      });
+      return;
+    }
+
     setStatus({ kind: "submitting" });
     try {
       const res = await fetch("/api/register", {
         method: "POST",
         headers: { "content-type": "application/json" },
-        body: JSON.stringify(values),
+        body: JSON.stringify({
+          ...values,
+          turnstileToken,
+          // Honeypot — must always be empty when submitted by a real user.
+          website: "",
+        }),
       });
       const body = await res.json().catch(() => ({ ok: false }));
       if (!res.ok || !body.ok) {
+        // Reset Turnstile after a failed attempt — tokens are single-use.
+        turnstileRef.current?.reset();
+        setTurnstileToken(null);
         setStatus({
           kind: "error",
           message:
@@ -60,6 +83,8 @@ export function RegisterForm() {
       setStatus({ kind: "success" });
       reset();
     } catch {
+      turnstileRef.current?.reset();
+      setTurnstileToken(null);
       setStatus({
         kind: "error",
         message: "Network error. Please try again.",
@@ -77,6 +102,21 @@ export function RegisterForm() {
       className="space-y-6"
       noValidate
     >
+      {/* Honeypot — must stay invisible to humans. Bots that fill every
+          field will populate this and be silently rejected server-side. */}
+      <div aria-hidden className="hidden" style={{ display: "none" }}>
+        <label>
+          Website
+          <input
+            type="text"
+            name="website"
+            tabIndex={-1}
+            autoComplete="off"
+            defaultValue=""
+          />
+        </label>
+      </div>
+
       <div className="grid gap-5 md:grid-cols-2">
         <Field label="Full name" error={errors.fullName?.message}>
           <input
@@ -152,16 +192,40 @@ export function RegisterForm() {
         />
         <span className="text-[color:var(--color-ink-soft)] leading-relaxed">
           I agree to be contacted about Sharks&rsquo; Valley event details.
+          See our{" "}
+          <a
+            href="/privacy"
+            className="underline hover:text-[var(--color-brand-primary)]"
+          >
+            privacy policy
+          </a>{" "}
+          for what we collect and how we use it.
         </span>
       </label>
       {errors.consent?.message && (
         <p className="text-sm text-red-600">{errors.consent.message}</p>
       )}
 
+      {TURNSTILE_SITE_KEY ? (
+        <div className="pt-2">
+          <Turnstile
+            ref={turnstileRef}
+            siteKey={TURNSTILE_SITE_KEY}
+            onSuccess={(token) => setTurnstileToken(token)}
+            onError={() => setTurnstileToken(null)}
+            onExpire={() => setTurnstileToken(null)}
+            options={{ theme: "light", size: "flexible" }}
+          />
+        </div>
+      ) : null}
+
       <div className="flex items-center gap-4 pt-2">
         <button
           type="submit"
-          disabled={status.kind === "submitting"}
+          disabled={
+            status.kind === "submitting" ||
+            (TURNSTILE_SITE_KEY != null && !turnstileToken)
+          }
           className="group inline-flex items-center gap-2 rounded-full bg-ink text-[color:var(--color-paper)] px-7 py-3.5 text-sm md:text-base font-medium hover:bg-[var(--color-brand-primary)] transition-colors disabled:opacity-60 disabled:cursor-not-allowed"
         >
           {status.kind === "submitting"
@@ -236,9 +300,9 @@ function SuccessScreen() {
         </em>
       </h2>
       <p className="mt-6 max-w-xl text-lg leading-relaxed text-[color:var(--color-ink-soft)]">
-        We&rsquo;ll send event details to your inbox. In the meantime — hop
-        into the Discord and introduce yourself. The community is where
-        half the value lives.
+        A confirmation email is on its way. Event details land in your
+        inbox as the date approaches. In the meantime — hop into the
+        Discord and introduce yourself.
       </p>
       <div className="mt-10 flex flex-wrap gap-3">
         <a

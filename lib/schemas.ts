@@ -1,5 +1,9 @@
 import { z } from "zod";
 
+/**
+ * Form-facing schema. Used by the client form (react-hook-form + zodResolver)
+ * and as the base for the server-side payload schema below.
+ */
 export const registrationSchema = z.object({
   fullName: z
     .string()
@@ -41,3 +45,18 @@ export const registrationSchema = z.object({
 });
 
 export type RegistrationInput = z.infer<typeof registrationSchema>;
+
+/**
+ * Server-side payload schema. Adds bot-protection fields the API requires:
+ *  - turnstileToken: Cloudflare Turnstile response token, verified server-side.
+ *  - website: honeypot field. Bots fill any field they see; humans can't see it.
+ *
+ * The honeypot field is named "website" because that's the most-targeted
+ * attribute name in scraped form fillers.
+ */
+export const registrationPayloadSchema = registrationSchema.extend({
+  turnstileToken: z.string().min(1).max(2048),
+  website: z.string().max(0).optional().or(z.literal("")),
+});
+
+export type RegistrationPayload = z.infer<typeof registrationPayloadSchema>;
