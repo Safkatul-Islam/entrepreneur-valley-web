@@ -5,7 +5,12 @@ import Image from "next/image";
 import { ScrollReveal } from "@/components/ui/ScrollReveal";
 import { MagneticButton } from "@/components/ui/MagneticButton";
 
-const DISCORD = "https://discord.gg/cMkdZQGCSE";
+const DISCORD =
+  process.env.NEXT_PUBLIC_DISCORD_INVITE ?? "https://discord.gg/cMkdZQGCSE";
+const SITE_URL =
+  process.env.NEXT_PUBLIC_SITE_URL ?? "https://entrepreneursvalley.club";
+const REGISTER_URL =
+  process.env.NEXT_PUBLIC_REGISTER_URL ?? `${SITE_URL}/register/sharks-valley`;
 
 export function JoinCTA() {
   return (
@@ -127,7 +132,7 @@ export function JoinCTA() {
           <ScrollReveal delay={0.2} className="flex md:justify-end">
             <div className="inline-block rounded-[var(--radius-card)] bg-white p-6 shadow-[var(--shadow-card)] border border-[color:var(--color-line)]">
               <QRCodeSVG
-                value={DISCORD}
+                value={REGISTER_URL}
                 size={220}
                 bgColor="#ffffff"
                 fgColor="#000000"
@@ -135,7 +140,7 @@ export function JoinCTA() {
                 className="block"
               />
               <div className="mt-4 font-[family-name:var(--font-mono)] text-[10px] uppercase tracking-widest text-[color:var(--color-brand-primary-dark)]/70 text-center">
-                Scan → discord.gg/ev
+                Scan to register
               </div>
             </div>
           </ScrollReveal>
