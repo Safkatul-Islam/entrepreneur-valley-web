@@ -11,3 +11,8 @@ next-env.d.ts
 tsconfig.tsbuildinfo
 .vscode/
 .idea/
+
+# Claude Code / agent tooling
+.agents/
+.mcp.json
+skills-lock.json
