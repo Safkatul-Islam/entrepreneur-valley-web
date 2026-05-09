@@ -104,10 +104,14 @@ export default withSentryConfig(nextConfig, {
     deleteSourcemapsAfterUpload: true,
   },
 
-  // Drop the Sentry SDK debug logger from the client bundle in prod.
-  disableLogger: true,
-
-  // Wire automatic Vercel Cron monitoring (no-op since we have no cron jobs
-  // on Vercel — our cron lives in Supabase. Harmless to enable.)
-  automaticVercelMonitors: true,
+  // Replaces deprecated top-level `disableLogger` and `automaticVercelMonitors`.
+  webpack: {
+    treeshake: {
+      // Drop the Sentry SDK debug logger from the client bundle in prod.
+      removeDebugLogging: true,
+    },
+    // Wire automatic Vercel Cron monitoring (no-op since we have no cron
+    // jobs on Vercel — our cron lives in Supabase. Harmless to enable.)
+    automaticVercelMonitors: true,
+  },
 });
