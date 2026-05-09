@@ -4,16 +4,17 @@ import { withSentryConfig } from "@sentry/nextjs";
 /**
  * Security headers applied to every response. CSP is the load-bearing one:
  * it explicitly lists the third parties we actually use (Turnstile, Vercel
- * Analytics if enabled later) and blocks everything else, mitigating XSS
- * even if user-generated content sneaks past Zod.
+ * Analytics if enabled later, Sentry ingest) and blocks everything else,
+ * mitigating XSS even if user-generated content sneaks past Zod.
  *
  * 'unsafe-inline' on style-src is needed for Tailwind/inline component
  * styles. 'unsafe-eval' on script-src is needed for Next.js dev mode and
  * Framer Motion in some cases — accept this trade-off; the static-analysis
  * payoff is small compared to the breakage risk.
  *
- * Sentry uses the tunnelRoute "/monitoring" so all telemetry goes through
- * same-origin, meaning CSP doesn't need to whitelist *.ingest.sentry.io.
+ * Sentry events POST directly to *.ingest.sentry.io. Some users with
+ * aggressive ad-blockers may block this — acceptable tradeoff vs. the
+ * complexity of the tunnelRoute alternative.
  */
 const csp = [
   "default-src 'self'",
@@ -21,7 +22,7 @@ const csp = [
   "style-src 'self' 'unsafe-inline'",
   "img-src 'self' data: blob: https://images.unsplash.com https://*.supabase.co https://*.public.blob.vercel-storage.com",
   "font-src 'self' data:",
-  "connect-src 'self' https://*.supabase.co https://challenges.cloudflare.com",
+  "connect-src 'self' https://*.supabase.co https://challenges.cloudflare.com https://*.ingest.sentry.io https://*.ingest.us.sentry.io",
   "frame-src https://challenges.cloudflare.com",
   "frame-ancestors 'none'",
   "base-uri 'self'",
@@ -96,10 +97,6 @@ export default withSentryConfig(nextConfig, {
 
   // Upload more client chunks for better stack traces.
   widenClientFileUpload: true,
-
-  // Route Sentry traffic through /monitoring on our own origin so CSP doesn't
-  // need to whitelist sentry.io and ad-blockers can't kill telemetry.
-  tunnelRoute: "/monitoring",
 
   // Don't ship source maps publicly; delete them after Sentry upload so
   // the prod bundle doesn't expose unminified code.
