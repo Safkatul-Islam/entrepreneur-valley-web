@@ -12,9 +12,8 @@ import { withSentryConfig } from "@sentry/nextjs";
  * Framer Motion in some cases — accept this trade-off; the static-analysis
  * payoff is small compared to the breakage risk.
  *
- * Sentry events POST directly to *.ingest.sentry.io. Some users with
- * aggressive ad-blockers may block this — acceptable tradeoff vs. the
- * complexity of the tunnelRoute alternative.
+ * Sentry events tunnel through our own /monitoring route (same-origin), so
+ * CSP doesn't need to whitelist sentry.io and ad-blockers can't kill telemetry.
  */
 const csp = [
   "default-src 'self'",
@@ -22,7 +21,7 @@ const csp = [
   "style-src 'self' 'unsafe-inline'",
   "img-src 'self' data: blob: https://images.unsplash.com https://*.supabase.co https://*.public.blob.vercel-storage.com",
   "font-src 'self' data:",
-  "connect-src 'self' https://*.supabase.co https://challenges.cloudflare.com https://*.ingest.sentry.io https://*.ingest.us.sentry.io",
+  "connect-src 'self' https://*.supabase.co https://challenges.cloudflare.com",
   "frame-src https://challenges.cloudflare.com",
   "frame-ancestors 'none'",
   "base-uri 'self'",

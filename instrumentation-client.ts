@@ -6,6 +6,9 @@ import * as Sentry from "@sentry/nextjs";
 Sentry.init({
   dsn: process.env.NEXT_PUBLIC_SENTRY_DSN,
 
+  // Same-origin tunnel to bypass ad-blockers. Implemented at app/monitoring/route.ts.
+  tunnel: "/monitoring",
+
   // Sample 10% of transactions for performance monitoring. Bump if you want
   // more visibility; 10% is plenty at club traffic.
   tracesSampleRate: 0.1,
