@@ -20,6 +20,15 @@ export const dynamic = "force-dynamic";
 // we reject it.
 const ALLOWED_PROJECT_IDS = new Set(["4511357250371584"]);
 
+// Fallback DSN — used when the envelope header omits its own dsn (legitimate
+// for some envelope types like sessions). We trust our server-configured DSN
+// since it's the same project we'd accept anyway.
+function getFallbackDsn(): string | null {
+  return (
+    process.env.SENTRY_DSN ?? process.env.NEXT_PUBLIC_SENTRY_DSN ?? null
+  );
+}
+
 export async function POST(req: NextRequest): Promise<NextResponse> {
   try {
     const envelope = await req.text();
@@ -35,13 +44,16 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
       return new NextResponse("bad envelope header", { status: 400 });
     }
 
-    if (!header.dsn) {
+    // Per Sentry's envelope spec, the dsn field in the header is optional.
+    // When absent, fall back to the server-configured DSN (same project).
+    const dsnString = header.dsn ?? getFallbackDsn();
+    if (!dsnString) {
       return new NextResponse("missing dsn", { status: 400 });
     }
 
     let dsn: URL;
     try {
-      dsn = new URL(header.dsn);
+      dsn = new URL(dsnString);
     } catch {
       return new NextResponse("invalid dsn", { status: 400 });
     }
