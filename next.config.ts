@@ -1,4 +1,5 @@
 import type { NextConfig } from "next";
+import { withSentryConfig } from "@sentry/nextjs";
 
 /**
  * Security headers applied to every response. CSP is the load-bearing one:
@@ -10,6 +11,9 @@ import type { NextConfig } from "next";
  * styles. 'unsafe-eval' on script-src is needed for Next.js dev mode and
  * Framer Motion in some cases — accept this trade-off; the static-analysis
  * payoff is small compared to the breakage risk.
+ *
+ * Sentry uses the tunnelRoute "/monitoring" so all telemetry goes through
+ * same-origin, meaning CSP doesn't need to whitelist *.ingest.sentry.io.
  */
 const csp = [
   "default-src 'self'",
@@ -23,6 +27,7 @@ const csp = [
   "base-uri 'self'",
   "form-action 'self'",
   "object-src 'none'",
+  "worker-src 'self' blob:",
   "upgrade-insecure-requests",
 ].join("; ");
 
@@ -79,4 +84,33 @@ const nextConfig: NextConfig = {
   },
 };
 
-export default nextConfig;
+export default withSentryConfig(nextConfig, {
+  // Sentry org + project slugs. Both come from env so they can stay out of
+  // git. When unset (e.g. local builds without auth), the plugin skips
+  // source-map upload but runtime instrumentation still works.
+  org: process.env.SENTRY_ORG,
+  project: process.env.SENTRY_PROJECT,
+
+  // Suppress noisy build logs locally; keep them in CI/Vercel for diagnosis.
+  silent: !process.env.CI,
+
+  // Upload more client chunks for better stack traces.
+  widenClientFileUpload: true,
+
+  // Route Sentry traffic through /monitoring on our own origin so CSP doesn't
+  // need to whitelist sentry.io and ad-blockers can't kill telemetry.
+  tunnelRoute: "/monitoring",
+
+  // Don't ship source maps publicly; delete them after Sentry upload so
+  // the prod bundle doesn't expose unminified code.
+  sourcemaps: {
+    deleteSourcemapsAfterUpload: true,
+  },
+
+  // Drop the Sentry SDK debug logger from the client bundle in prod.
+  disableLogger: true,
+
+  // Wire automatic Vercel Cron monitoring (no-op since we have no cron jobs
+  // on Vercel — our cron lives in Supabase. Harmless to enable.)
+  automaticVercelMonitors: true,
+});
