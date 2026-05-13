@@ -8,10 +8,10 @@ const SOCIALS = [
 ];
 
 const PAGES = [
-  { label: "Mission", href: "#mission" },
-  { label: "Sharks' Valley", href: "#sharks-valley" },
-  { label: "Board", href: "#board" },
-  { label: "FAQ", href: "#faq" },
+  { label: "Mission", href: "/mission" },
+  { label: "Sharks\u2019 Valley", href: "/sharks-valley" },
+  { label: "Board", href: "/board" },
+  { label: "FAQ", href: "/faq" },
   { label: "Register", href: "/register/sharks-valley" },
 ];
 
@@ -20,29 +20,29 @@ export function Footer() {
     <footer className="relative bg-[var(--color-brand-primary-dark)] text-[color:var(--color-brand-cream)] overflow-hidden">
       <div
         aria-hidden
-        className="absolute -top-32 -right-16 opacity-[0.07] pointer-events-none"
+        className="absolute -top-28 -right-12 opacity-[0.05] pointer-events-none"
       >
         <Image
           src="/logo-ev.png"
           alt=""
-          width={520}
-          height={520}
-          className="w-[520px] h-auto"
+          width={480}
+          height={480}
+          className="w-[480px] h-auto"
         />
       </div>
 
-      <div className="container-page relative py-20 md:py-28">
-        <div className="grid gap-12 md:grid-cols-[1.6fr_1fr_1fr_1fr]">
+      <div className="container-page relative py-16 md:py-24">
+        <div className="grid gap-10 md:grid-cols-[1.6fr_1fr_1fr_1fr]">
           <div>
-            <div className="flex items-center gap-4">
+            <div className="flex items-center gap-3">
               <Image
                 src="/logo-ev.png"
                 alt="Entrepreneur Valley"
-                width={64}
-                height={64}
-                className="size-14 object-contain"
+                width={56}
+                height={56}
+                className="size-12 object-contain"
               />
-              <div className="font-[family-name:var(--font-display)] text-3xl md:text-4xl leading-[0.95]">
+              <div className="font-[family-name:var(--font-display)] text-2xl md:text-3xl leading-[0.95]">
                 Entrepreneur&rsquo;s
                 <br />
                 <em className="not-italic text-[color:var(--color-brand-cream)]">
@@ -50,7 +50,7 @@ export function Footer() {
                 </em>
               </div>
             </div>
-            <p className="mt-6 max-w-sm text-[color:var(--color-brand-cream)]/70 text-sm leading-relaxed">
+            <p className="mt-5 max-w-sm text-[color:var(--color-brand-cream)]/60 text-sm leading-relaxed">
               A student-led home for builders, founders, and the relentlessly
               curious at Santa Monica College.
             </p>
@@ -70,10 +70,10 @@ export function Footer() {
           <FooterCol title="Social" items={SOCIALS} />
         </div>
 
-        <div className="mt-16 pt-8 border-t border-[color:var(--color-brand-cream)]/15 flex flex-col md:flex-row items-start md:items-center justify-between gap-3 text-xs text-[color:var(--color-brand-cream)]/60">
-          <span>© {new Date().getFullYear()} Entrepreneur&rsquo;s Valley · SMC</span>
+        <div className="mt-12 pt-6 border-t border-[color:var(--color-brand-cream)]/10 flex flex-col md:flex-row items-start md:items-center justify-between gap-2 text-xs text-[color:var(--color-brand-cream)]/45">
+          <span>&copy; {new Date().getFullYear()} Entrepreneur&rsquo;s Valley &middot; SMC</span>
           <span className="font-[family-name:var(--font-mono)] tracking-wider">
-            Built with intent — not templates.
+            Built with intent &mdash; not templates.
           </span>
         </div>
       </div>
@@ -90,15 +90,15 @@ function FooterCol({
 }) {
   return (
     <div>
-      <div className="eyebrow text-[color:var(--color-brand-cream)]">
+      <div className="eyebrow text-[color:var(--color-brand-cream)]/80">
         {title}
       </div>
-      <ul className="mt-5 space-y-2.5 text-sm">
+      <ul className="mt-4 space-y-2 text-sm">
         {items.map((i) => (
           <li key={i.label}>
             <Link
               href={i.href}
-              className="text-[color:var(--color-brand-cream)]/70 hover:text-[color:var(--color-brand-cream)] transition-colors"
+              className="text-[color:var(--color-brand-cream)]/55 hover:text-[color:var(--color-brand-cream)] transition-colors"
             >
               {i.label}
             </Link>

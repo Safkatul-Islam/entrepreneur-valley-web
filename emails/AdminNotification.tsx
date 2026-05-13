@@ -5,6 +5,7 @@ import {
   Heading,
   Hr,
   Html,
+  Link,
   Preview,
   Text,
 } from "@react-email/components";
@@ -14,10 +15,8 @@ export interface AdminNotificationProps {
   email: string;
   phone?: string | null;
   school: string;
-  yearMajor: string;
-  motivation?: string | null;
-  dietary?: string | null;
-  accessibility?: string | null;
+  major: string;
+  videoUrl: string;
   eventSlug: string;
   submittedAt: string;
 }
@@ -27,10 +26,8 @@ export function AdminNotification({
   email,
   phone,
   school,
-  yearMajor,
-  motivation,
-  dietary,
-  accessibility,
+  major,
+  videoUrl,
   eventSlug,
   submittedAt,
 }: AdminNotificationProps) {
@@ -38,14 +35,16 @@ export function AdminNotification({
     <Html>
       <Head />
       <Preview>
-        New registration: {fullName} ({email})
+        New PITCHER registration: {fullName} ({email})
       </Preview>
       <Body style={body}>
         <Container style={container}>
-          <Heading style={h1}>New registration</Heading>
+          <Heading style={h1}>New pitcher registration</Heading>
           <Text style={meta}>
-            Event: {eventSlug} · {submittedAt}
+            Event: {eventSlug} &middot; {submittedAt}
           </Text>
+
+          <Text style={typeBadge}>PITCHER</Text>
 
           <Hr style={hr} />
 
@@ -53,12 +52,16 @@ export function AdminNotification({
           <Row label="Email" value={email} />
           {phone ? <Row label="Phone" value={phone} /> : null}
           <Row label="School" value={school} />
-          <Row label="Year & major" value={yearMajor} />
-          {dietary ? <Row label="Dietary" value={dietary} /> : null}
-          {accessibility ? (
-            <Row label="Accessibility" value={accessibility} />
-          ) : null}
-          {motivation ? <Row label="Motivation" value={motivation} /> : null}
+          <Row label="Major" value={major} />
+
+          <Hr style={hr} />
+
+          <Text style={rowStyle}>
+            <strong style={labelStyle}>Pitch Video:</strong>{" "}
+            <Link href={videoUrl} style={linkStyle}>
+              Watch video &rarr;
+            </Link>
+          </Text>
 
           <Hr style={hr} />
 
@@ -81,7 +84,7 @@ function Row({ label, value }: { label: string; value: string }) {
 }
 
 const body: React.CSSProperties = {
-  backgroundColor: "#f6f8f7",
+  backgroundColor: "#f5f7f8",
   fontFamily:
     '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
   margin: 0,
@@ -98,16 +101,29 @@ const container: React.CSSProperties = {
 };
 
 const h1: React.CSSProperties = {
-  color: "#0a5f32",
+  color: "#003d4d",
   fontSize: "24px",
   fontWeight: 700,
   margin: "0 0 8px",
 };
 
 const meta: React.CSSProperties = {
-  color: "#5a6b66",
+  color: "#5a6f77",
   fontSize: "13px",
   margin: 0,
+};
+
+const typeBadge: React.CSSProperties = {
+  display: "inline-block",
+  backgroundColor: "#003d4d",
+  color: "#ffffff",
+  fontSize: "11px",
+  fontWeight: 700,
+  padding: "4px 10px",
+  borderRadius: "4px",
+  textTransform: "uppercase" as const,
+  letterSpacing: "0.08em",
+  margin: "8px 0 0",
 };
 
 const rowStyle: React.CSSProperties = {
@@ -118,8 +134,13 @@ const rowStyle: React.CSSProperties = {
 };
 
 const labelStyle: React.CSSProperties = {
-  color: "#5a6b66",
+  color: "#5a6f77",
   marginRight: "8px",
+};
+
+const linkStyle: React.CSSProperties = {
+  color: "#003d4d",
+  textDecoration: "underline",
 };
 
 const hr: React.CSSProperties = {

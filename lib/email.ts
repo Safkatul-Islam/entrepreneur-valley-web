@@ -1,16 +1,10 @@
 import { Resend } from "resend";
-import {
-  RegistrationConfirmation,
-} from "@/emails/RegistrationConfirmation";
+import { RegistrationConfirmation } from "@/emails/RegistrationConfirmation";
 import {
   AdminNotification,
   type AdminNotificationProps,
 } from "@/emails/AdminNotification";
 
-/**
- * Server-only email client. Lazily instantiated so missing env vars don't
- * crash the import; the API route checks for misconfiguration explicitly.
- */
 let cached: Resend | null = null;
 
 function getResend(): Resend | null {
@@ -26,23 +20,15 @@ export interface RegistrantContext {
   fullName: string;
   phone?: string | null;
   school: string;
-  yearMajor: string;
-  motivation?: string | null;
-  dietary?: string | null;
-  accessibility?: string | null;
+  major: string;
+  videoUrl: string;
   eventSlug: string;
 }
 
 const FROM_DEFAULT = "Entrepreneur Valley <noreply@entrepreneursvalley.club>";
 
-/**
- * Send registrant confirmation + admin notification. Uses Promise.allSettled
- * so an email failure never 500s the registration request — the row is
- * already in Supabase and the user has a success state. Errors are logged
- * server-side and visible in Sentry once that's wired up.
- */
 export async function sendRegistrationEmails(
-  ctx: RegistrantContext
+  ctx: RegistrantContext,
 ): Promise<void> {
   const resend = getResend();
   if (!resend) {
@@ -68,19 +54,18 @@ export async function sendRegistrationEmails(
     email: ctx.to,
     phone: ctx.phone ?? null,
     school: ctx.school,
-    yearMajor: ctx.yearMajor,
-    motivation: ctx.motivation ?? null,
-    dietary: ctx.dietary ?? null,
-    accessibility: ctx.accessibility ?? null,
+    major: ctx.major,
+    videoUrl: ctx.videoUrl,
     eventSlug: ctx.eventSlug,
-    submittedAt: new Date().toISOString().replace("T", " ").slice(0, 19) + " UTC",
+    submittedAt:
+      new Date().toISOString().replace("T", " ").slice(0, 19) + " UTC",
   };
 
   const sends: Promise<unknown>[] = [
     resend.emails.send({
       from,
       to: ctx.to,
-      subject: "You're registered for Sharks' Valley",
+      subject: "You're registered to pitch at Sharks' Valley",
       react: RegistrationConfirmation({
         fullName: ctx.fullName,
         discordInvite,
@@ -94,13 +79,15 @@ export async function sendRegistrationEmails(
       resend.emails.send({
         from,
         to: adminList,
-        subject: `New registration: ${ctx.fullName}`,
+        subject: `New PITCHER registration: ${ctx.fullName}`,
         react: AdminNotification(adminPayload),
         replyTo: ctx.to,
-      })
+      }),
     );
   } else if (process.env.NODE_ENV === "production") {
-    console.warn("[email] ADMIN_NOTIFICATION_EMAILS not set — no admin email sent");
+    console.warn(
+      "[email] ADMIN_NOTIFICATION_EMAILS not set — no admin email sent",
+    );
   }
 
   const results = await Promise.allSettled(sends);

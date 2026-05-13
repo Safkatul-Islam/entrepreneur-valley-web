@@ -20,6 +20,7 @@ const csp = [
   "script-src 'self' 'unsafe-eval' 'unsafe-inline' https://challenges.cloudflare.com https://*.vercel-scripts.com",
   "style-src 'self' 'unsafe-inline'",
   "img-src 'self' data: blob: https://images.unsplash.com https://*.supabase.co https://*.public.blob.vercel-storage.com",
+  "media-src 'self' blob: https://*.supabase.co",
   "font-src 'self' data:",
   "connect-src 'self' https://*.supabase.co https://challenges.cloudflare.com",
   "frame-src https://challenges.cloudflare.com",

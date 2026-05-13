@@ -36,6 +36,32 @@ create unique index if not exists registrations_event_email_uniq
   on public.registrations (event_slug, lower(email));
 
 -- ============================================================================
+-- 1b. Migration: two-track registration (attendee / pitcher)
+-- ============================================================================
+-- Safe to re-run: uses IF NOT EXISTS / ADD COLUMN IF NOT EXISTS.
+
+alter table public.registrations
+  add column if not exists registration_type text not null default 'attendee';
+
+alter table public.registrations
+  add column if not exists major text;
+
+alter table public.registrations
+  add column if not exists video_url text;
+
+-- ============================================================================
+-- 1c. Supabase Storage — pitch-videos bucket
+-- ============================================================================
+-- Create via Supabase dashboard or CLI:
+--   Storage → New bucket → "pitch-videos"
+--   - Public: OFF
+--   - Max file size: 100 MB
+--   - Allowed MIME types: video/mp4, video/quicktime, video/webm
+--
+-- All uploads go through the Next.js API route using the service-role key,
+-- so no RLS storage policies are needed for anon/authenticated.
+
+-- ============================================================================
 -- 2. Rate limiting (DB-backed; durable across Vercel cold starts)
 -- ============================================================================
 

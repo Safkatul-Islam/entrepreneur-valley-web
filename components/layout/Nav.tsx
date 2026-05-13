@@ -10,7 +10,7 @@ import { cn } from "@/lib/utils";
 
 const LINKS = [
   { href: "/mission", label: "Our Mission" },
-  { href: "/sharks-valley", label: "Last Sharks' Valley" },
+  { href: "/sharks-valley", label: "Sharks\u2019 Valley" },
   { href: "/board", label: "Club Members" },
   { href: "/faq", label: "Questions" },
 ];
@@ -32,39 +32,39 @@ export function Nav() {
 
   const bg = useTransform(
     scrollY,
-    [0, 120],
-    ["rgba(245,247,248,0)", "rgba(245,247,248,0.88)"]
+    [0, 100],
+    ["rgba(247,249,250,0)", "rgba(247,249,250,0.9)"],
   );
 
   return (
     <motion.header
       style={{ backgroundColor: bg }}
       className={cn(
-        "fixed top-0 inset-x-0 z-50 transition-[backdrop-filter,border] duration-300",
+        "fixed top-0 inset-x-0 z-50 transition-[backdrop-filter,border] duration-200",
         (scrolled || menuOpen) &&
-          "backdrop-blur-lg border-b border-[color:var(--color-line)]"
+          "backdrop-blur-xl border-b border-[color:var(--color-line)]",
       )}
     >
-      <div className="container-page flex items-center justify-between h-16 md:h-20">
+      <div className="container-page flex items-center justify-between h-14 md:h-16">
         <Link
           href="/"
-          className="flex items-center gap-3 text-ink font-medium tracking-tight"
-          aria-label="Entrepreneur's Valley — home"
+          className="flex items-center gap-2.5 text-ink font-medium tracking-tight"
+          aria-label="Entrepreneur\u2019s Valley \u2014 home"
         >
           <Image
             src="/logo-ev.png"
             alt=""
-            width={44}
-            height={44}
+            width={40}
+            height={40}
             priority
-            className="size-9 md:size-10 object-contain"
+            className="size-8 md:size-9 object-contain"
           />
-          <span className="hidden sm:inline font-[family-name:var(--font-display)] text-xl md:text-[1.35rem] text-[color:var(--color-brand-primary-dark)]">
+          <span className="hidden sm:inline font-[family-name:var(--font-display)] text-lg md:text-xl text-[color:var(--color-brand-primary-dark)]">
             Entrepreneur&rsquo;s Valley
           </span>
         </Link>
 
-        <nav className="max-md:hidden flex items-center gap-6 lg:gap-8">
+        <nav className="max-md:hidden flex items-center gap-5 lg:gap-7">
           {LINKS.map((l) => {
             const active =
               pathname === l.href ||
@@ -77,14 +77,14 @@ export function Nav() {
                   "group relative text-sm whitespace-nowrap transition-colors",
                   active
                     ? "text-[color:var(--color-brand-primary)]"
-                    : "text-[color:var(--color-ink-soft)] hover:text-[color:var(--color-brand-primary)]"
+                    : "text-[color:var(--color-ink-soft)] hover:text-[color:var(--color-brand-primary)]",
                 )}
               >
                 {l.label}
                 <span
                   className={cn(
-                    "absolute -bottom-1 left-0 h-px bg-[color:var(--color-brand-accent-deep)] transition-all duration-300",
-                    active ? "w-full" : "w-0 group-hover:w-full"
+                    "absolute -bottom-0.5 left-0 h-px bg-[color:var(--color-brand-accent-deep)] transition-all duration-250",
+                    active ? "w-full" : "w-0 group-hover:w-full",
                   )}
                 />
               </Link>
@@ -102,7 +102,7 @@ export function Nav() {
               aria-hidden
               className="transition-transform group-hover:translate-x-0.5"
             >
-              →
+              &rarr;
             </span>
           </Link>
 
@@ -111,27 +111,27 @@ export function Nav() {
             aria-label={menuOpen ? "Close menu" : "Open menu"}
             aria-expanded={menuOpen}
             onClick={() => setMenuOpen((v) => !v)}
-            className="max-md:inline-flex hidden items-center justify-center size-10 rounded-full border border-[color:var(--color-line)] text-[color:var(--color-brand-primary-dark)] hover:bg-[color:var(--color-paper-dim)] transition-colors"
+            className="md:hidden inline-flex items-center justify-center size-9 rounded-full border border-[color:var(--color-line)] text-[color:var(--color-brand-primary-dark)] hover:bg-[color:var(--color-paper-dim)] transition-colors"
           >
             {menuOpen ? (
-              <X className="size-5" aria-hidden />
+              <X className="size-4.5" aria-hidden />
             ) : (
-              <Menu className="size-5" aria-hidden />
+              <Menu className="size-4.5" aria-hidden />
             )}
           </button>
         </div>
       </div>
 
       <AnimatePresence>
-        {menuOpen ? (
+        {menuOpen && (
           <motion.nav
             initial={{ opacity: 0, height: 0 }}
             animate={{ opacity: 1, height: "auto" }}
             exit={{ opacity: 0, height: 0 }}
-            transition={{ duration: 0.28, ease: [0.22, 1, 0.36, 1] }}
-            className="max-md:block hidden overflow-hidden border-t border-[color:var(--color-line)] bg-[color:var(--color-paper)]/95 backdrop-blur-lg"
+            transition={{ duration: 0.25, ease: [0.22, 1, 0.36, 1] }}
+            className="md:hidden overflow-hidden border-t border-[color:var(--color-line)] bg-[color:var(--color-paper)]/95 backdrop-blur-xl"
           >
-            <ul className="container-page py-4 flex flex-col gap-1">
+            <ul className="container-page py-3 flex flex-col gap-0.5">
               {LINKS.map((l) => {
                 const active =
                   pathname === l.href ||
@@ -141,10 +141,10 @@ export function Nav() {
                     <Link
                       href={l.href}
                       className={cn(
-                        "block rounded-lg px-4 py-3 text-base transition-colors",
+                        "block rounded-lg px-4 py-2.5 text-[15px] transition-colors",
                         active
-                          ? "bg-[color:var(--color-brand-accent)]/15 text-[color:var(--color-brand-primary)]"
-                          : "text-[color:var(--color-ink-soft)] hover:bg-[color:var(--color-paper-dim)]"
+                          ? "bg-[color:var(--color-brand-accent)]/12 text-[color:var(--color-brand-primary)]"
+                          : "text-[color:var(--color-ink-soft)] hover:bg-[color:var(--color-paper-dim)]",
                       )}
                     >
                       {l.label}
@@ -154,7 +154,7 @@ export function Nav() {
               })}
             </ul>
           </motion.nav>
-        ) : null}
+        )}
       </AnimatePresence>
     </motion.header>
   );

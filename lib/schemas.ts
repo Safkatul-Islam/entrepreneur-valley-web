@@ -1,10 +1,10 @@
 import { z } from "zod";
 
-/**
- * Form-facing schema. Used by the client form (react-hook-form + zodResolver)
- * and as the base for the server-side payload schema below.
- */
-export const registrationSchema = z.object({
+/* ------------------------------------------------------------------ */
+/*  Pitcher-only registration (attendees register via LUMA)           */
+/* ------------------------------------------------------------------ */
+
+export const pitcherSchema = z.object({
   fullName: z
     .string()
     .trim()
@@ -18,43 +18,32 @@ export const registrationSchema = z.object({
   phone: z
     .string()
     .trim()
-    .max(32)
-    .optional()
-    .or(z.literal("")),
+    .min(1, "Phone number is required")
+    .max(32, "Phone number is too long"),
   school: z
     .string()
     .trim()
     .min(2, "Which school do you attend?")
     .max(120),
-  yearMajor: z
+  major: z
     .string()
     .trim()
-    .min(2, "Year and major, please")
+    .min(2, "Please enter your major")
     .max(120),
-  dietary: z.string().trim().max(200).optional().or(z.literal("")),
-  accessibility: z.string().trim().max(200).optional().or(z.literal("")),
-  motivation: z
-    .string()
-    .trim()
-    .max(500, "Keep it under 500 characters")
-    .optional()
-    .or(z.literal("")),
+  videoUrl: z.string().url("Please upload your pitch video"),
   consent: z
     .boolean()
     .refine((v) => v === true, "You must agree to be contacted"),
 });
 
-export type RegistrationInput = z.infer<typeof registrationSchema>;
+export type PitcherInput = z.infer<typeof pitcherSchema>;
 
 /**
  * Server-side payload schema. Adds bot-protection fields the API requires:
  *  - turnstileToken: Cloudflare Turnstile response token, verified server-side.
  *  - website: honeypot field. Bots fill any field they see; humans can't see it.
- *
- * The honeypot field is named "website" because that's the most-targeted
- * attribute name in scraped form fillers.
  */
-export const registrationPayloadSchema = registrationSchema.extend({
+export const registrationPayloadSchema = pitcherSchema.extend({
   turnstileToken: z.string().min(1).max(2048),
   website: z.string().max(0).optional().or(z.literal("")),
 });

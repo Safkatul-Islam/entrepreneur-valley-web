@@ -82,13 +82,13 @@ export function EventCarousel() {
       role="region"
       aria-roledescription="carousel"
       aria-label="Upcoming events"
-      className="relative w-full max-w-xl outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--color-brand-accent)]/60 rounded-[var(--radius-card)]"
+      className="relative w-full max-w-lg outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--color-brand-accent)]/50 rounded-[var(--radius-card)]"
       onMouseEnter={() => setPaused(true)}
       onMouseLeave={() => setPaused(false)}
       onFocus={() => setPaused(true)}
       onBlur={() => setPaused(false)}
     >
-      <div className="relative overflow-hidden rounded-[var(--radius-card)] border border-[color:var(--color-brand-accent)]/35 bg-white/80 backdrop-blur-md shadow-[0_20px_60px_-30px_rgba(0,61,77,0.35)]">
+      <div className="relative overflow-hidden rounded-[var(--radius-card)] border border-[color:var(--color-line)] bg-white/80 backdrop-blur-md shadow-[var(--shadow-card)]">
         <AnimatePresence mode="wait">
           <motion.div
             key={event.id}
@@ -96,15 +96,15 @@ export function EventCarousel() {
             animate={{ opacity: 1, y: 0 }}
             exit={reduced ? undefined : { opacity: 0, y: -8 }}
             transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
-            className="relative p-6 md:p-7"
+            className="relative p-5 md:p-6"
           >
-            <div className="flex items-start justify-between gap-4">
-              <span className="inline-flex items-center gap-1.5 rounded-full border border-[color:var(--color-brand-accent)]/40 bg-[color:var(--color-brand-accent)]/10 px-2.5 py-1 font-[family-name:var(--font-mono)] text-[10px] uppercase tracking-widest text-[color:var(--color-brand-primary-dark)]">
+            <div className="flex flex-wrap items-start justify-between gap-2">
+              <span className="inline-flex items-center gap-1.5 rounded-full border border-[color:var(--color-brand-accent)]/30 bg-[color:var(--color-brand-accent)]/8 px-2.5 py-1 font-[family-name:var(--font-mono)] text-[10px] uppercase tracking-widest text-[color:var(--color-brand-primary-dark)]">
                 <KindIcon className="size-3" aria-hidden />
                 {kindMeta.label}
               </span>
-              <div className="flex items-center gap-2 text-right">
-                <span className="font-[family-name:var(--font-mono)] text-[11px] uppercase tracking-widest text-[color:var(--color-muted)]">
+              <div className="flex items-center gap-2">
+                <span className="font-[family-name:var(--font-mono)] text-[10px] uppercase tracking-widest text-[color:var(--color-muted)]">
                   {event.date}
                 </span>
                 <StatusBadge status={event.status} />
@@ -142,7 +142,7 @@ export function EventCarousel() {
               duration: paused ? 0 : AUTO_ADVANCE_MS / 1000,
               ease: "linear",
             }}
-            className="h-[3px] bg-[color:var(--color-brand-accent)]"
+            className="h-[2px] bg-[color:var(--color-brand-accent)]"
           />
         ) : null}
       </div>

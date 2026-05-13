@@ -14,47 +14,47 @@ const REGISTER_URL =
 
 export function JoinCTA() {
   return (
-    <section className="relative py-28 md:py-40 overflow-hidden">
+    <section className="relative py-24 md:py-36 overflow-hidden">
       <div
         aria-hidden
         className="absolute inset-0 pointer-events-none"
         style={{
           background:
-            "linear-gradient(180deg, #b8e8d4 0%, #9ddcbf 55%, #b0e4cd 100%)",
+            "linear-gradient(180deg, var(--color-cta-bg) 0%, var(--color-cta-bg-mid) 55%, var(--color-cta-bg-end) 100%)",
         }}
       />
       <div
         aria-hidden
-        className="absolute -top-24 -right-24 w-[44rem] h-[44rem] rounded-full blur-3xl opacity-55 pointer-events-none"
+        className="absolute -top-20 -right-20 w-[40rem] h-[40rem] rounded-full blur-3xl opacity-40 pointer-events-none"
         style={{
           background:
-            "radial-gradient(circle, rgba(0, 201, 150, 0.6), transparent 65%)",
+            "radial-gradient(circle, color-mix(in oklab, var(--color-brand-accent) 50%, transparent), transparent 65%)",
         }}
       />
       <div
         aria-hidden
-        className="absolute -bottom-40 -left-24 w-[44rem] h-[44rem] rounded-full blur-3xl opacity-40 pointer-events-none"
+        className="absolute -bottom-32 -left-20 w-[40rem] h-[40rem] rounded-full blur-3xl opacity-30 pointer-events-none"
         style={{
           background:
-            "radial-gradient(circle, rgba(0, 61, 77, 0.55), transparent 65%)",
+            "radial-gradient(circle, color-mix(in oklab, var(--color-brand-primary) 45%, transparent), transparent 65%)",
         }}
       />
       <div
         aria-hidden
-        className="absolute -left-32 -bottom-32 opacity-[0.08] pointer-events-none"
+        className="absolute -left-28 -bottom-28 opacity-[0.06] pointer-events-none"
       >
         <Image
           src="/logo-ev.png"
           alt=""
-          width={520}
-          height={520}
-          className="w-[520px] h-auto"
+          width={480}
+          height={480}
+          className="w-[480px] h-auto"
         />
       </div>
 
       <div className="container-page relative">
         <ScrollReveal>
-          <div className="eyebrow text-[color:var(--color-brand-primary-dark)]/70">
+          <div className="eyebrow text-[color:var(--color-brand-primary-dark)]/60">
             Join us
           </div>
           <h2 className="display-xl mt-4 text-balance text-[color:var(--color-brand-primary-dark)]">
@@ -66,9 +66,9 @@ export function JoinCTA() {
           </h2>
         </ScrollReveal>
 
-        <div className="mt-16 grid gap-12 md:grid-cols-[1.2fr_1fr] md:items-end">
-          <ScrollReveal delay={0.1}>
-            <dl className="grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-10">
+        <div className="mt-12 md:mt-16 grid gap-10 md:grid-cols-[1.2fr_1fr] md:items-end">
+          <ScrollReveal delay={0.08}>
+            <dl className="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-8">
               <InfoBlock
                 label="Where"
                 value={
@@ -85,7 +85,7 @@ export function JoinCTA() {
                   <>
                     Weekly meetings
                     <br />
-                    <span className="text-[color:var(--color-brand-primary-dark)]/70">
+                    <span className="text-[color:var(--color-brand-primary-dark)]/60">
                       Day &amp; time pinned in Discord
                     </span>
                   </>
@@ -107,17 +107,17 @@ export function JoinCTA() {
                   <>
                     Sharks&rsquo; Valley
                     <br />
-                    <span className="text-[color:var(--color-brand-primary-dark)]/70">
-                      Register now ↘︎
+                    <span className="text-[color:var(--color-brand-primary-dark)]/60">
+                      Register now &darr;
                     </span>
                   </>
                 }
               />
             </dl>
 
-            <div className="mt-12 flex flex-wrap gap-3">
+            <div className="mt-10 flex flex-wrap gap-3">
               <MagneticButton href="/register/sharks-valley" variant="primary">
-                Register for Sharks&rsquo; Valley →
+                Register for Sharks&rsquo; Valley &rarr;
               </MagneticButton>
               <MagneticButton
                 href={DISCORD}
@@ -129,17 +129,17 @@ export function JoinCTA() {
             </div>
           </ScrollReveal>
 
-          <ScrollReveal delay={0.2} className="flex md:justify-end">
-            <div className="inline-block rounded-[var(--radius-card)] bg-white p-6 shadow-[var(--shadow-card)] border border-[color:var(--color-line)]">
+          <ScrollReveal delay={0.15} className="flex md:justify-end">
+            <div className="inline-block rounded-[var(--radius-card)] bg-white p-5 shadow-[var(--shadow-card)] border border-[color:var(--color-line)]">
               <QRCodeSVG
                 value={REGISTER_URL}
-                size={220}
+                size={200}
                 bgColor="#ffffff"
-                fgColor="#000000"
+                fgColor="#0a1a20"
                 level="M"
                 className="block"
               />
-              <div className="mt-4 font-[family-name:var(--font-mono)] text-[10px] uppercase tracking-widest text-[color:var(--color-brand-primary-dark)]/70 text-center">
+              <div className="mt-3 font-[family-name:var(--font-mono)] text-[10px] uppercase tracking-widest text-[color:var(--color-brand-primary-dark)]/60 text-center">
                 Scan to register
               </div>
             </div>
@@ -159,10 +159,10 @@ function InfoBlock({
 }) {
   return (
     <div>
-      <dt className="font-[family-name:var(--font-mono)] text-[10px] uppercase tracking-widest text-[color:var(--color-brand-primary-dark)]/65">
+      <dt className="font-[family-name:var(--font-mono)] text-[10px] uppercase tracking-widest text-[color:var(--color-brand-primary-dark)]/55">
         {label}
       </dt>
-      <dd className="mt-2 font-[family-name:var(--font-display)] text-3xl leading-tight text-[color:var(--color-brand-primary-dark)]">
+      <dd className="mt-1.5 font-[family-name:var(--font-display)] text-2xl md:text-3xl leading-tight text-[color:var(--color-brand-primary-dark)]">
         {value}
       </dd>
     </div>

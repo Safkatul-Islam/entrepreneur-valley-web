@@ -7,32 +7,33 @@ import { Plus } from "lucide-react";
 
 export function FAQ() {
   return (
-    <section id="faq" className="relative py-28 md:py-40 overflow-hidden">
+    <section id="faq" className="relative py-24 md:py-36 overflow-hidden">
       <div
         aria-hidden
         className="absolute inset-0 pointer-events-none"
         style={{
           background:
-            "linear-gradient(180deg, #e7eff1 0%, #dfe9ec 55%, #d4e0e3 100%)",
+            "linear-gradient(180deg, var(--color-paper) 0%, var(--color-paper-dim) 55%, var(--color-paper) 100%)",
         }}
       />
       <div
         aria-hidden
-        className="absolute -top-40 -right-32 w-[46rem] h-[42rem] rounded-full blur-3xl opacity-40 pointer-events-none"
+        className="absolute -top-32 -right-28 w-[42rem] h-[38rem] rounded-full blur-3xl opacity-25 pointer-events-none"
         style={{
           background:
-            "radial-gradient(circle, rgba(0, 61, 77, 0.5), transparent 60%)",
+            "radial-gradient(circle, color-mix(in oklab, var(--color-brand-primary) 40%, transparent), transparent 60%)",
         }}
       />
       <div
         aria-hidden
-        className="absolute -bottom-32 -left-24 w-[36rem] h-[36rem] rounded-full blur-3xl opacity-30 pointer-events-none"
+        className="absolute -bottom-28 -left-20 w-[32rem] h-[32rem] rounded-full blur-3xl opacity-20 pointer-events-none"
         style={{
           background:
-            "radial-gradient(circle, rgba(0, 201, 150, 0.3), transparent 65%)",
+            "radial-gradient(circle, color-mix(in oklab, var(--color-brand-accent) 25%, transparent), transparent 65%)",
         }}
       />
-      <div className="container-page relative grid gap-16 md:grid-cols-[1fr_1.4fr]">
+
+      <div className="container-page relative grid gap-12 md:gap-16 md:grid-cols-[1fr_1.4fr]">
         <ScrollReveal className="md:sticky md:top-28 md:self-start">
           <div className="eyebrow">Questions</div>
           <h2 className="display-lg mt-4 text-balance">
@@ -40,13 +41,13 @@ export function FAQ() {
             <br />
             honestly.
           </h2>
-          <p className="mt-6 max-w-sm text-sm md:text-base text-[color:var(--color-ink-soft)] leading-relaxed">
-            Still curious? Drop by a weekly meeting, or ask in the Discord —
-            someone&rsquo;s always around.
+          <p className="mt-5 max-w-sm text-sm md:text-base text-[color:var(--color-ink-soft)] leading-relaxed">
+            Still curious? Drop by a weekly meeting, or ask in the Discord
+            &mdash; someone&rsquo;s always around.
           </p>
         </ScrollReveal>
 
-        <ScrollReveal delay={0.1}>
+        <ScrollReveal delay={0.08}>
           <Accordion.Root
             type="single"
             collapsible
@@ -59,18 +60,18 @@ export function FAQ() {
                 className="group"
               >
                 <Accordion.Header>
-                  <Accordion.Trigger className="group flex w-full items-center justify-between gap-6 py-6 text-left hover:text-[var(--color-brand-primary)] transition-colors">
-                    <span className="font-[family-name:var(--font-display)] text-xl md:text-2xl leading-tight pr-4">
+                  <Accordion.Trigger className="group flex w-full items-center justify-between gap-4 py-5 text-left hover:text-[var(--color-brand-primary)] transition-colors">
+                    <span className="font-[family-name:var(--font-display)] text-lg md:text-xl leading-tight pr-3">
                       {item.q}
                     </span>
                     <Plus
                       aria-hidden
-                      className="shrink-0 size-5 transition-transform duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] group-data-[state=open]:rotate-45"
+                      className="shrink-0 size-4.5 transition-transform duration-400 ease-[cubic-bezier(0.22,1,0.36,1)] group-data-[state=open]:rotate-45"
                     />
                   </Accordion.Trigger>
                 </Accordion.Header>
                 <Accordion.Content className="overflow-hidden data-[state=open]:animate-accordion-down data-[state=closed]:animate-accordion-up">
-                  <p className="pb-7 pr-10 text-[color:var(--color-ink-soft)] leading-relaxed text-pretty">
+                  <p className="pb-6 pr-8 text-[color:var(--color-ink-soft)] leading-relaxed text-pretty text-sm md:text-base">
                     {item.a}
                   </p>
                 </Accordion.Content>

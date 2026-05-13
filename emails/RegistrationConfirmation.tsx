@@ -28,7 +28,8 @@ export function RegistrationConfirmation({
     <Html>
       <Head />
       <Preview>
-        You&rsquo;re registered for Sharks&rsquo; Valley — see you there.
+        You&rsquo;re registered to pitch at Sharks&rsquo; Valley &mdash; see
+        you there.
       </Preview>
       <Body style={body}>
         <Container style={container}>
@@ -37,27 +38,33 @@ export function RegistrationConfirmation({
           <Text style={paragraph}>Hi {firstName},</Text>
 
           <Text style={paragraph}>
-            Thanks for registering for <strong>Sharks&rsquo; Valley</strong> —
-            Entrepreneur Valley&rsquo;s flagship pitch event. We&rsquo;ll send
-            event details (date, time, location, prep notes) to this email
-            address as the date approaches.
+            Thanks for registering to pitch at{" "}
+            <strong>Sharks&rsquo; Valley</strong> &mdash; Entrepreneur
+            Valley&rsquo;s flagship pitch event. We received your pitch video
+            and our team will review it. Expect logistics, your pitch slot, and
+            prep notes in a follow-up email.
           </Text>
+
+          <Section style={badgeSection}>
+            <Text style={badgeText}>Registered as: Pitcher</Text>
+          </Section>
 
           <Section style={cta}>
             <Link href={discordInvite} style={button}>
-              Join the Discord →
+              Join the Discord &rarr;
             </Link>
           </Section>
 
           <Text style={paragraph}>
-            The Discord is where the community actually happens — introductions,
-            cofounder hunts, Q&amp;A with mentors. Worth ten minutes today.
+            The Discord is where the community actually happens &mdash;
+            introductions, cofounder hunts, Q&amp;A with mentors. Worth ten
+            minutes today.
           </Text>
 
           <Hr style={hr} />
 
           <Text style={footer}>
-            Entrepreneur Valley · Santa Monica College
+            Entrepreneur Valley &middot; Santa Monica College
             <br />
             <Link href={siteUrl} style={footerLink}>
               {siteUrl.replace(/^https?:\/\//, "")}
@@ -66,8 +73,7 @@ export function RegistrationConfirmation({
 
           <Text style={footerSmall}>
             You received this because you registered on our website. We only
-            email about event logistics. Reply to this email with any
-            questions.
+            email about event logistics. Reply to this email with any questions.
           </Text>
         </Container>
       </Body>
@@ -76,7 +82,7 @@ export function RegistrationConfirmation({
 }
 
 const body: React.CSSProperties = {
-  backgroundColor: "#f6f8f7",
+  backgroundColor: "#f5f7f8",
   fontFamily:
     '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
   margin: 0,
@@ -93,7 +99,7 @@ const container: React.CSSProperties = {
 };
 
 const h1: React.CSSProperties = {
-  color: "#0a5f32",
+  color: "#003d4d",
   fontSize: "32px",
   fontWeight: 700,
   lineHeight: "1.2",
@@ -107,12 +113,25 @@ const paragraph: React.CSSProperties = {
   margin: "0 0 16px",
 };
 
-const cta: React.CSSProperties = {
-  margin: "32px 0",
+const badgeSection: React.CSSProperties = { margin: "16px 0" };
+
+const badgeText: React.CSSProperties = {
+  display: "inline-block",
+  backgroundColor: "#003d4d",
+  color: "#ffffff",
+  fontSize: "12px",
+  fontWeight: 600,
+  padding: "6px 14px",
+  borderRadius: "999px",
+  textTransform: "uppercase" as const,
+  letterSpacing: "0.05em",
+  margin: 0,
 };
 
+const cta: React.CSSProperties = { margin: "32px 0" };
+
 const button: React.CSSProperties = {
-  backgroundColor: "#0a5f32",
+  backgroundColor: "#003d4d",
   color: "#ffffff",
   display: "inline-block",
   padding: "12px 24px",
@@ -128,14 +147,14 @@ const hr: React.CSSProperties = {
 };
 
 const footer: React.CSSProperties = {
-  color: "#5a6b66",
+  color: "#5a6f77",
   fontSize: "13px",
   lineHeight: "1.6",
   margin: "0 0 12px",
 };
 
 const footerLink: React.CSSProperties = {
-  color: "#0a5f32",
+  color: "#003d4d",
   textDecoration: "none",
 };
 

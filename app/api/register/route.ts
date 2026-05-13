@@ -23,7 +23,7 @@ interface SuccessResponse {
 
 function err(
   body: ErrorResponse,
-  init: ResponseInit
+  init: ResponseInit,
 ): NextResponse<ErrorResponse> {
   return NextResponse.json(body, init);
 }
@@ -38,7 +38,6 @@ export async function POST(req: NextRequest) {
     req.headers.get("x-real-ip") ??
     "local";
 
-  // 1. Parse JSON early so honeypot + Zod can both run on it.
   let json: unknown;
   try {
     json = await req.json();
@@ -46,7 +45,6 @@ export async function POST(req: NextRequest) {
     return err({ ok: false, error: "Invalid JSON body" }, { status: 400 });
   }
 
-  // 2. Honeypot — silent reject. Bots that fill every field get an opaque 400.
   if (
     json &&
     typeof json === "object" &&
@@ -57,7 +55,6 @@ export async function POST(req: NextRequest) {
     return err({ ok: false, error: "Invalid input" }, { status: 400 });
   }
 
-  // 3. Rate limit — DB-backed so it survives serverless cold starts.
   const rl = await rateLimitDb(`register:${ip}`, RATE_LIMIT);
   if (!rl.ok) {
     return err(
@@ -65,12 +62,10 @@ export async function POST(req: NextRequest) {
       {
         status: 429,
         headers: { "Retry-After": String(rl.retryAfter) },
-      }
+      },
     );
   }
 
-  // 4. Zod validation — checks shape, lengths, formats, consent boolean,
-  //    and that turnstileToken is present.
   const parsed = registrationPayloadSchema.safeParse(json);
   if (!parsed.success) {
     return err(
@@ -79,43 +74,39 @@ export async function POST(req: NextRequest) {
         error: "Invalid input",
         issues: parsed.error.flatten().fieldErrors,
       },
-      { status: 400 }
+      { status: 400 },
     );
   }
 
   const data = parsed.data;
 
-  // 5. Turnstile — verify against Cloudflare. This is the expensive check
-  //    so it goes last among the gates.
   const turnstile = await verifyTurnstile(data.turnstileToken, ip);
   if (!turnstile.ok) {
     return err(
       { ok: false, error: "Verification failed. Refresh and try again." },
-      { status: 400 }
+      { status: 400 },
     );
   }
 
-  // 6. Insert into Supabase.
   const userAgent = req.headers.get("user-agent") ?? null;
   try {
     const supabase = getSupabaseAdmin();
     const { error } = await supabase.from("registrations").insert({
       event_slug: EVENT_SLUG,
+      registration_type: "pitcher",
       full_name: data.fullName,
       email: data.email,
       phone: data.phone || null,
       school: data.school,
-      year_major: data.yearMajor,
-      dietary: data.dietary || null,
-      accessibility: data.accessibility || null,
-      motivation: data.motivation || null,
+      major: data.major,
+      year_major: data.major,
+      video_url: data.videoUrl,
       consent: data.consent,
       ip,
       user_agent: userAgent,
     });
 
     if (error) {
-      // Unique violation on (event_slug, lower(email))
       if (error.code === "23505") {
         return err(
           {
@@ -123,34 +114,30 @@ export async function POST(req: NextRequest) {
             error:
               "Looks like this email is already registered. Check your inbox.",
           },
-          { status: 409 }
+          { status: 409 },
         );
       }
       console.error("[register] supabase error", error);
       return err(
         { ok: false, error: "Something went wrong. Try again shortly." },
-        { status: 500 }
+        { status: 500 },
       );
     }
   } catch (e) {
     console.error("[register] unexpected", e);
     return err(
       { ok: false, error: "Something went wrong. Try again shortly." },
-      { status: 500 }
+      { status: 500 },
     );
   }
 
-  // 7. Send emails. Failures here don't fail the request — the registration
-  //    is already saved, and the user gets a success state.
   await sendRegistrationEmails({
     to: data.email,
     fullName: data.fullName,
     phone: data.phone || null,
     school: data.school,
-    yearMajor: data.yearMajor,
-    motivation: data.motivation || null,
-    dietary: data.dietary || null,
-    accessibility: data.accessibility || null,
+    major: data.major,
+    videoUrl: data.videoUrl,
     eventSlug: EVENT_SLUG,
   });
 

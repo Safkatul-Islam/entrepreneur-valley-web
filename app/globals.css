@@ -1,52 +1,59 @@
 @import "tailwindcss";
 
 @theme {
-  /* Primary brand — deep teal → vibrant mint gradient (per club direction) */
-  --color-brand-primary: #003d4d;          /* deep teal — main brand */
-  --color-brand-primary-dark: #002530;     /* darker teal — footer, deepest bg */
-  --color-brand-primary-deep: #001218;     /* near-black teal — ink alt */
-  --color-brand-primary-light: #0c5a6e;    /* mid teal — gradients, hovers */
+  --color-brand-primary: #003d4d;
+  --color-brand-primary-dark: #002530;
+  --color-brand-primary-deep: #001218;
+  --color-brand-primary-light: #0c5a6e;
 
-  --color-brand-accent: #00c996;           /* vibrant mint — CTA/highlight */
-  --color-brand-accent-bright: #3effc0;    /* brightest mint — hover pop */
-  --color-brand-accent-deep: #008f68;      /* darker mint — pressed */
+  --color-brand-accent: #00c996;
+  --color-brand-accent-bright: #3effc0;
+  --color-brand-accent-deep: #008f68;
 
-  /* "cream" kept as a semantic alias: foreground color when text sits on the
-     dark-teal brand surface. Cool near-white with a whisper of teal. */
   --color-brand-cream: #eef7f8;
-  --color-brand-cream-soft: #00c996;       /* emphasis accent — mint pop */
+  --color-brand-cream-dim: #d0dfe1;
 
-  /* Sharks' Valley sub-brand stays its own moody chrome/teal world */
+  --color-cta-bg: #c2eddb;
+  --color-cta-bg-mid: #a8e4c8;
+  --color-cta-bg-end: #b8ebd2;
+
   --color-brand-sharks: #134a56;
   --color-brand-sharks-light: #1f6b78;
   --color-brand-sharks-dark: #0a2a32;
   --color-brand-chrome: #cfd5d8;
   --color-brand-chrome-bright: #e8ebed;
 
-  --color-ink: #001218;                    /* near-black, teal undertone */
-  --color-ink-soft: #1a2e36;
-  --color-paper: #f5f7f8;                  /* cool near-white base */
-  --color-paper-dim: #e9eef0;              /* cooler off-white alt */
-  --color-muted: #5a6f77;
-  --color-line: rgba(0, 18, 24, 0.08);
+  --color-ink: #0a1a20;
+  --color-ink-soft: #2a3d45;
+  --color-paper: #f7f9fa;
+  --color-paper-dim: #edf1f3;
+  --color-paper-warm: #f4f0ec;
+  --color-muted: #4d6670;
+  --color-line: rgba(0, 18, 24, 0.09);
 
   --font-display: var(--font-instrument-serif), ui-serif, Georgia, serif;
   --font-sans: var(--font-geist-sans), ui-sans-serif, system-ui, -apple-system, sans-serif;
   --font-mono: var(--font-geist-mono), ui-monospace, monospace;
   --font-condensed: var(--font-anton), "Bebas Neue", ui-sans-serif, system-ui;
 
-  --radius-card: 1.25rem;
+  --radius-card: 1rem;
   --radius-pill: 999px;
 
   --ease-out-expo: cubic-bezier(0.22, 1, 0.36, 1);
   --ease-in-out-quint: cubic-bezier(0.83, 0, 0.17, 1);
 
-  --shadow-soft: 0 4px 30px rgba(0, 18, 24, 0.06);
-  --shadow-card: 0 20px 60px -20px rgba(0, 18, 24, 0.25);
-  --shadow-chrome: 0 30px 80px -30px rgba(19, 74, 86, 0.6);
+  /* Dark-surface registration page */
+  --color-dark-surface: rgba(255, 255, 255, 0.07);
+  --color-dark-surface-hover: rgba(255, 255, 255, 0.12);
+  --color-dark-border: rgba(255, 255, 255, 0.15);
+  --color-dark-border-focus: var(--color-brand-accent);
 
-  --animate-accordion-down: accordion-down 0.5s cubic-bezier(0.22, 1, 0.36, 1);
-  --animate-accordion-up: accordion-up 0.45s cubic-bezier(0.22, 1, 0.36, 1);
+  --shadow-soft: 0 2px 20px rgba(0, 18, 24, 0.05);
+  --shadow-card: 0 12px 40px -12px rgba(0, 18, 24, 0.18);
+  --shadow-chrome: 0 24px 60px -20px rgba(19, 74, 86, 0.5);
+
+  --animate-accordion-down: accordion-down 0.45s cubic-bezier(0.22, 1, 0.36, 1);
+  --animate-accordion-up: accordion-up 0.4s cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 @keyframes accordion-down {
@@ -73,7 +80,9 @@
 
   html {
     color-scheme: light;
+    scroll-behavior: smooth;
     -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
     text-rendering: optimizeLegibility;
   }
 
@@ -99,6 +108,8 @@
     color: var(--color-ink);
     font-family: var(--font-sans);
     font-feature-settings: "ss01", "cv02", "cv11";
+    font-size: 16px;
+    line-height: 1.6;
     min-height: 100dvh;
     overflow-x: hidden;
   }
@@ -111,12 +122,21 @@
   h1, h2, h3, h4 {
     font-family: var(--font-display);
     letter-spacing: -0.02em;
-    line-height: 1;
+    line-height: 1.05;
     font-weight: 400;
+  }
+
+  p {
+    line-height: 1.65;
   }
 
   button, a {
     -webkit-tap-highlight-color: transparent;
+  }
+
+  img {
+    max-width: 100%;
+    height: auto;
   }
 
   @media (prefers-reduced-motion: reduce) {
@@ -132,30 +152,37 @@
 @layer utilities {
   .container-page {
     width: 100%;
-    max-width: 1440px;
+    max-width: 1280px;
     margin-inline: auto;
-    padding-inline: clamp(1.25rem, 4vw, 3rem);
+    padding-inline: clamp(1.25rem, 5vw, 3rem);
   }
 
   .display-xl {
     font-family: var(--font-display);
-    font-size: clamp(3.5rem, 10vw, 9rem);
-    line-height: 0.95;
+    font-size: clamp(2.75rem, 8vw + 0.5rem, 8rem);
+    line-height: 0.92;
     letter-spacing: -0.035em;
     font-weight: 400;
   }
 
   .display-lg {
     font-family: var(--font-display);
-    font-size: clamp(2.5rem, 6vw, 5rem);
-    line-height: 1;
+    font-size: clamp(2.25rem, 5vw + 0.25rem, 4.5rem);
+    line-height: 1.02;
     letter-spacing: -0.03em;
+  }
+
+  .display-md {
+    font-family: var(--font-display);
+    font-size: clamp(1.75rem, 3.5vw + 0.25rem, 3rem);
+    line-height: 1.1;
+    letter-spacing: -0.025em;
   }
 
   .display-condensed {
     font-family: var(--font-condensed);
-    font-size: clamp(4rem, 14vw, 14rem);
-    line-height: 0.9;
+    font-size: clamp(3.5rem, 12vw, 12rem);
+    line-height: 0.88;
     letter-spacing: 0.01em;
     text-transform: uppercase;
     font-weight: 400;
@@ -163,8 +190,8 @@
 
   .eyebrow {
     font-family: var(--font-mono);
-    font-size: 0.75rem;
-    letter-spacing: 0.15em;
+    font-size: 0.8125rem;
+    letter-spacing: 0.14em;
     text-transform: uppercase;
     color: var(--color-muted);
   }
@@ -191,16 +218,16 @@
     background: linear-gradient(
       180deg,
       #f4f6f7 0%,
-      #cfd5d8 45%,
-      #7e888d 55%,
-      #cfd5d8 75%,
+      #cfd5d8 40%,
+      #8a9499 52%,
+      #cfd5d8 70%,
       #e8ebed 100%
     );
     -webkit-background-clip: text;
     background-clip: text;
     -webkit-text-fill-color: transparent;
     color: transparent;
-    filter: drop-shadow(0 2px 8px rgba(0, 0, 0, 0.35));
+    filter: drop-shadow(0 2px 6px rgba(0, 0, 0, 0.3));
   }
 
   .grain::before {
@@ -208,7 +235,7 @@
     position: absolute;
     inset: 0;
     pointer-events: none;
-    opacity: 0.05;
+    opacity: 0.04;
     mix-blend-mode: multiply;
     background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3' /%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' /%3E%3C/svg%3E");
   }
@@ -225,15 +252,15 @@
     mask-image: linear-gradient(
       to right,
       transparent,
-      black 6%,
-      black 94%,
+      black 5%,
+      black 95%,
       transparent
     );
     -webkit-mask-image: linear-gradient(
       to right,
       transparent,
-      black 6%,
-      black 94%,
+      black 5%,
+      black 95%,
       transparent
     );
   }
