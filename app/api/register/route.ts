@@ -99,7 +99,6 @@ export async function POST(req: NextRequest) {
       phone: data.phone || null,
       school: data.school,
       major: data.major,
-      year_major: data.major,
       video_url: data.videoUrl,
       consent: data.consent,
       ip,
@@ -131,15 +130,19 @@ export async function POST(req: NextRequest) {
     );
   }
 
-  await sendRegistrationEmails({
-    to: data.email,
-    fullName: data.fullName,
-    phone: data.phone || null,
-    school: data.school,
-    major: data.major,
-    videoUrl: data.videoUrl,
-    eventSlug: EVENT_SLUG,
-  });
+  try {
+    await sendRegistrationEmails({
+      to: data.email,
+      fullName: data.fullName,
+      phone: data.phone || null,
+      school: data.school,
+      major: data.major,
+      videoUrl: data.videoUrl,
+      eventSlug: EVENT_SLUG,
+    });
+  } catch (e) {
+    console.error("[register] sendRegistrationEmails failed", e);
+  }
 
   return ok();
 }

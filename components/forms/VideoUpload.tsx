@@ -19,6 +19,7 @@ type UploadState =
 
 const MAX_DURATION_SECONDS = 60;
 const MAX_FILE_SIZE = 100 * 1024 * 1024;
+const VIDEO_METADATA_TIMEOUT_MS = 10_000;
 const ALLOWED_TYPES = new Set(["video/mp4", "video/quicktime", "video/webm"]);
 
 function getVideoDuration(file: File): Promise<number> {
@@ -27,13 +28,31 @@ function getVideoDuration(file: File): Promise<number> {
     video.preload = "metadata";
     const url = URL.createObjectURL(file);
     video.src = url;
-    video.onloadedmetadata = () => {
+    const done = () => {
       URL.revokeObjectURL(url);
-      resolve(video.duration);
+    };
+
+    let settled = false;
+    const timer = window.setTimeout(() => {
+      if (settled) return;
+      settled = true;
+      done();
+      reject(new Error("Video metadata timed out"));
+    }, VIDEO_METADATA_TIMEOUT_MS);
+
+    const finish = (fn: () => void) => {
+      if (settled) return;
+      settled = true;
+      window.clearTimeout(timer);
+      done();
+      fn();
+    };
+
+    video.onloadedmetadata = () => {
+      finish(() => resolve(video.duration));
     };
     video.onerror = () => {
-      URL.revokeObjectURL(url);
-      reject(new Error("Could not read video metadata"));
+      finish(() => reject(new Error("Could not read video metadata")));
     };
   });
 }
@@ -95,6 +114,10 @@ export function VideoUpload({ value, onChange, error }: Props) {
         const result = await new Promise<{ ok: boolean; url?: string; error?: string }>(
           (resolve, reject) => {
             xhr.onload = () => {
+              if (xhr.status < 200 || xhr.status >= 300) {
+                reject(new Error(`Upload failed (${xhr.status})`));
+                return;
+              }
               try {
                 resolve(JSON.parse(xhr.responseText));
               } catch {

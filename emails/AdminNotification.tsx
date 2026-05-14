@@ -56,12 +56,14 @@ export function AdminNotification({
 
           <Hr style={hr} />
 
-          <Text style={rowStyle}>
-            <strong style={labelStyle}>Pitch Video:</strong>{" "}
-            <Link href={videoUrl} style={linkStyle}>
-              Watch video &rarr;
-            </Link>
-          </Text>
+          {videoUrl ? (
+            <Text style={rowStyle}>
+              <strong style={labelStyle}>Pitch Video:</strong>{" "}
+              <Link href={videoUrl} style={linkStyle}>
+                Watch video &rarr;
+              </Link>
+            </Text>
+          ) : null}
 
           <Hr style={hr} />
 

@@ -54,8 +54,8 @@ export function Nav() {
           <Image
             src="/logo-ev.png"
             alt=""
-            width={40}
-            height={40}
+            width={36}
+            height={36}
             priority
             className="size-8 md:size-9 object-contain"
           />

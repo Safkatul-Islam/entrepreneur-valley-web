@@ -14,5 +14,6 @@ tsconfig.tsbuildinfo
 
 # Claude Code / agent tooling
 .agents/
+.codex/
 .mcp.json
 skills-lock.json

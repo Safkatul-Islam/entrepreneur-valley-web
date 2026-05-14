@@ -38,8 +38,8 @@ export function Footer() {
               <Image
                 src="/logo-ev.png"
                 alt="Entrepreneur Valley"
-                width={56}
-                height={56}
+                width={48}
+                height={48}
                 className="size-12 object-contain"
               />
               <div className="font-[family-name:var(--font-display)] text-2xl md:text-3xl leading-[0.95]">

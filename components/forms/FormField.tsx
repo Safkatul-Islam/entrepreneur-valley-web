@@ -40,7 +40,9 @@ export function FormField({
       </span>
       {children}
       {error && (
-        <span className="mt-1.5 block text-sm text-red-400">{error}</span>
+        <span role="alert" className="mt-1.5 block text-sm text-red-400">
+          {error}
+        </span>
       )}
     </label>
   );

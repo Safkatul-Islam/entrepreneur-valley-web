@@ -56,7 +56,7 @@ export function Testimonials() {
                 <div className="font-medium text-sm text-[color:var(--color-brand-cream)]">
                   {t.name}
                 </div>
-                <div className="font-[family-name:var(--font-mono)] text-[10px] uppercase tracking-widest text-[color:var(--color-brand-cream)]/50">
+                <div className="font-[family-name:var(--font-mono)] text-xs uppercase tracking-widest text-[color:var(--color-brand-cream)]/60">
                   {t.role}
                 </div>
               </div>

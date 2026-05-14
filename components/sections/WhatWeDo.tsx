@@ -74,7 +74,7 @@ export function WhatWeDo() {
               >
                 <div
                   aria-hidden
-                  className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-400"
+                  className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-[400ms]"
                   style={{
                     background:
                       "linear-gradient(135deg, color-mix(in oklab, var(--color-brand-accent) 14%, transparent), transparent 60%)",

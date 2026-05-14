@@ -49,17 +49,40 @@ alter table public.registrations
 alter table public.registrations
   add column if not exists video_url text;
 
+-- major: active academic major / focus for registrants (used by current API).
+-- year_major: legacy column from the original single-field schema; prefer
+--   `major` for new data. Optionally backfill year_major from major via SQL
+--   in the dashboard for reporting continuity.
+
+alter table public.registrations
+  alter column year_major drop not null;
+
+do $$
+begin
+  if not exists (
+    select 1
+    from pg_constraint
+    where conname = 'registrations_registration_type_check'
+      and conrelid = 'public.registrations'::regclass
+  ) then
+    alter table public.registrations
+      add constraint registrations_registration_type_check
+      check (registration_type in ('attendee', 'pitcher'));
+  end if;
+end $$;
+
 -- ============================================================================
 -- 1c. Supabase Storage — pitch-videos bucket
 -- ============================================================================
 -- Create via Supabase dashboard or CLI:
 --   Storage → New bucket → "pitch-videos"
---   - Public: OFF
+--   - Public: ON (the app returns public review links after upload)
 --   - Max file size: 100 MB
 --   - Allowed MIME types: video/mp4, video/quicktime, video/webm
 --
 -- All uploads go through the Next.js API route using the service-role key,
--- so no RLS storage policies are needed for anon/authenticated.
+-- so no anon/authenticated insert policies are needed. Public read access is
+-- used for unlisted review links in confirmation/admin emails.
 
 -- ============================================================================
 -- 2. Rate limiting (DB-backed; durable across Vercel cold starts)

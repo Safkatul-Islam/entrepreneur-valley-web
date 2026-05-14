@@ -104,8 +104,7 @@ them as such.
 In Supabase SQL editor:
 ```sql
 copy (
-  select full_name, email, phone, school, year_major,
-         dietary, accessibility, motivation, created_at
+  select full_name, email, phone, school, major, video_url, created_at
   from registrations
   where event_slug = 'sharks-valley'
   order by created_at

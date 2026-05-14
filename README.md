@@ -19,7 +19,14 @@ Visit `http://localhost:3000`.
 | `NEXT_PUBLIC_SUPABASE_URL` | client + server | Supabase project URL |
 | `SUPABASE_SERVICE_ROLE_KEY` | **server only** | Service role for inserting registrations |
 | `NEXT_PUBLIC_SITE_URL` | client | Canonical URL for OG/sitemap |
+| `NEXT_PUBLIC_REGISTER_URL` | client | Optional override for registration CTA links |
 | `NEXT_PUBLIC_DISCORD_INVITE` | client | Discord invite link shown in CTAs |
+| `NEXT_PUBLIC_LUMA_EVENT_URL` | client | Attendee registration link |
+| `NEXT_PUBLIC_TURNSTILE_SITE_KEY` | client | Cloudflare Turnstile site key |
+| `TURNSTILE_SECRET_KEY` | **server only** | Cloudflare Turnstile verification secret |
+| `RESEND_API_KEY` | **server only** | Resend API key for transactional emails |
+| `RESEND_FROM_EMAIL` | server | Verified sender used by Resend |
+| `ADMIN_NOTIFICATION_EMAILS` | server | Comma-separated admin recipients |
 
 ## Supabase setup
 
@@ -48,7 +55,14 @@ vercel link
 vercel env add NEXT_PUBLIC_SUPABASE_URL
 vercel env add SUPABASE_SERVICE_ROLE_KEY
 vercel env add NEXT_PUBLIC_SITE_URL
+vercel env add NEXT_PUBLIC_REGISTER_URL
 vercel env add NEXT_PUBLIC_DISCORD_INVITE
+vercel env add NEXT_PUBLIC_LUMA_EVENT_URL
+vercel env add NEXT_PUBLIC_TURNSTILE_SITE_KEY
+vercel env add TURNSTILE_SECRET_KEY
+vercel env add RESEND_API_KEY
+vercel env add RESEND_FROM_EMAIL
+vercel env add ADMIN_NOTIFICATION_EMAILS
 
 # Every push to main
 vercel --prod

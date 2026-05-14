@@ -18,8 +18,12 @@ export const pitcherSchema = z.object({
   phone: z
     .string()
     .trim()
-    .min(1, "Phone number is required")
-    .max(32, "Phone number is too long"),
+    .min(7, "Please enter a valid phone number")
+    .max(32, "Phone number is too long")
+    .regex(
+      /^[\d\s\-+().]{7,}$/,
+      "Use digits and common separators (+, spaces, dashes)",
+    ),
   school: z
     .string()
     .trim()

@@ -40,9 +40,9 @@ export function RegistrationConfirmation({
           <Text style={paragraph}>
             Thanks for registering to pitch at{" "}
             <strong>Sharks&rsquo; Valley</strong> &mdash; Entrepreneur
-            Valley&rsquo;s flagship pitch event. We received your pitch video
-            and our team will review it. Expect logistics, your pitch slot, and
-            prep notes in a follow-up email.
+            Valley&rsquo;s flagship pitch event. We&rsquo;ll review your pitch
+            video and follow up with logistics, your pitch slot, and prep notes
+            in a separate email.
           </Text>
 
           <Section style={badgeSection}>

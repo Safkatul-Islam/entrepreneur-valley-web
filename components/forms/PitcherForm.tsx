@@ -47,7 +47,7 @@ export function PitcherForm({ onSuccess }: Props) {
   });
 
   async function onSubmit(values: PitcherInput) {
-    if (!turnstileToken) {
+    if (TURNSTILE_SITE_KEY != null && !turnstileToken) {
       setStatus({
         kind: "error",
         message: "Please complete the verification challenge.",
