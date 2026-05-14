@@ -17,6 +17,7 @@ Visit `http://localhost:3000`.
 | Variable | Where | Purpose |
 |---|---|---|
 | `NEXT_PUBLIC_SUPABASE_URL` | client + server | Supabase project URL |
+| `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` | client | Public key used for direct browser uploads to Supabase Storage |
 | `SUPABASE_SERVICE_ROLE_KEY` | **server only** | Service role for inserting registrations |
 | `NEXT_PUBLIC_SITE_URL` | client | Canonical URL for OG/sitemap |
 | `NEXT_PUBLIC_REGISTER_URL` | client | Optional override for registration CTA links |
@@ -53,6 +54,7 @@ Drop board headshots into `public/board/*.jpg` and event photos into `public/sha
 # First-time
 vercel link
 vercel env add NEXT_PUBLIC_SUPABASE_URL
+vercel env add NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY
 vercel env add SUPABASE_SERVICE_ROLE_KEY
 vercel env add NEXT_PUBLIC_SITE_URL
 vercel env add NEXT_PUBLIC_REGISTER_URL

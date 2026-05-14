@@ -21,6 +21,9 @@ const MAX_DURATION_SECONDS = 60;
 const MAX_FILE_SIZE = 100 * 1024 * 1024;
 const VIDEO_METADATA_TIMEOUT_MS = 10_000;
 const ALLOWED_TYPES = new Set(["video/mp4", "video/quicktime", "video/webm"]);
+const SUPABASE_UPLOAD_KEY =
+  process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY ??
+  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
 
 type SignedUploadResponse =
   | { ok: true; uploadUrl: string; publicUrl: string; path: string }
@@ -100,6 +103,14 @@ export function VideoUpload({ value, onChange, error }: Props) {
       setState({ kind: "uploading", progress: 0 });
 
       try {
+        if (!SUPABASE_UPLOAD_KEY) {
+          setState({
+            kind: "error",
+            message: "Upload configuration is missing. Please contact the team.",
+          });
+          return;
+        }
+
         const signedUploadRes = await fetch("/api/upload-video", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -136,6 +147,8 @@ export function VideoUpload({ value, onChange, error }: Props) {
 
         const xhr = new XMLHttpRequest();
         xhr.open("POST", signedUpload.uploadUrl);
+        xhr.setRequestHeader("apikey", SUPABASE_UPLOAD_KEY);
+        xhr.setRequestHeader("Authorization", `Bearer ${SUPABASE_UPLOAD_KEY}`);
         xhr.setRequestHeader("x-upsert", "false");
 
         xhr.upload.onprogress = (e) => {
