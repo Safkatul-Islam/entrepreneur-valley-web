@@ -13,6 +13,7 @@ export function FormField({
   children,
   className,
   dark,
+  asLabel = true,
 }: {
   label: string;
   required?: boolean;
@@ -20,9 +21,10 @@ export function FormField({
   children: React.ReactNode;
   className?: string;
   dark?: boolean;
+  asLabel?: boolean;
 }) {
-  return (
-    <label className={cn("block", className)}>
+  const content = (
+    <>
       <span
         className={cn(
           "mb-2 flex items-center gap-1 text-xs font-[family-name:var(--font-mono)] uppercase tracking-widest",
@@ -44,6 +46,16 @@ export function FormField({
           {error}
         </span>
       )}
+    </>
+  );
+
+  if (!asLabel) {
+    return <div className={cn("block", className)}>{content}</div>;
+  }
+
+  return (
+    <label className={cn("block", className)}>
+      {content}
     </label>
   );
 }

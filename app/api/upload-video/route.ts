@@ -21,7 +21,7 @@ interface ErrorResponse {
 
 interface SuccessResponse {
   ok: true;
-  uploadUrl: string;
+  token: string;
   publicUrl: string;
   path: string;
 }
@@ -104,7 +104,7 @@ export async function POST(
 
     return NextResponse.json({
       ok: true,
-      uploadUrl: signedUpload.signedUrl,
+      token: signedUpload.token,
       publicUrl: urlData.publicUrl,
       path: signedUpload.path,
     });

@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useRef, useState } from "react";
+import { createClient } from "@supabase/supabase-js";
 import { Upload, CheckCircle, AlertCircle, X, Film } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -13,7 +14,7 @@ interface Props {
 type UploadState =
   | { kind: "idle" }
   | { kind: "validating" }
-  | { kind: "uploading"; progress: number }
+  | { kind: "uploading" }
   | { kind: "done"; url: string; name: string }
   | { kind: "error"; message: string };
 
@@ -21,12 +22,13 @@ const MAX_DURATION_SECONDS = 60;
 const MAX_FILE_SIZE = 100 * 1024 * 1024;
 const VIDEO_METADATA_TIMEOUT_MS = 10_000;
 const ALLOWED_TYPES = new Set(["video/mp4", "video/quicktime", "video/webm"]);
+const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL;
 const SUPABASE_UPLOAD_KEY =
   process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY ??
   process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
 
 type SignedUploadResponse =
-  | { ok: true; uploadUrl: string; publicUrl: string; path: string }
+  | { ok: true; token: string; publicUrl: string; path: string }
   | { ok: false; error: string };
 
 function getVideoDuration(file: File): Promise<number> {
@@ -100,10 +102,10 @@ export function VideoUpload({ value, onChange, error }: Props) {
         /* Let server handle duration enforcement */
       }
 
-      setState({ kind: "uploading", progress: 0 });
+      setState({ kind: "uploading" });
 
       try {
-        if (!SUPABASE_UPLOAD_KEY) {
+        if (!SUPABASE_URL || !SUPABASE_UPLOAD_KEY) {
           setState({
             kind: "error",
             message: "Upload configuration is missing. Please contact the team.",
@@ -141,46 +143,24 @@ export function VideoUpload({ value, onChange, error }: Props) {
           return;
         }
 
-        const formData = new FormData();
-        formData.append("cacheControl", "3600");
-        formData.append("", file);
-
-        const xhr = new XMLHttpRequest();
-        xhr.open("POST", signedUpload.uploadUrl);
-        xhr.setRequestHeader("apikey", SUPABASE_UPLOAD_KEY);
-        xhr.setRequestHeader("Authorization", `Bearer ${SUPABASE_UPLOAD_KEY}`);
-        xhr.setRequestHeader("x-upsert", "false");
-
-        xhr.upload.onprogress = (e) => {
-          if (e.lengthComputable) {
-            setState({
-              kind: "uploading",
-              progress: Math.round((e.loaded / e.total) * 100),
-            });
-          }
-        };
-
-        await new Promise<void>((resolve, reject) => {
-          xhr.onload = () => {
-            if (xhr.status < 200 || xhr.status >= 300) {
-              let message = `Upload failed (${xhr.status})`;
-              try {
-                const response = JSON.parse(xhr.responseText) as {
-                  error?: string;
-                  message?: string;
-                };
-                message = response.message ?? response.error ?? message;
-              } catch {
-                if (xhr.responseText) message = xhr.responseText;
-              }
-              reject(new Error(message));
-              return;
-            }
-            resolve();
-          };
-          xhr.onerror = () => reject(new Error("Network error"));
-          xhr.send(formData);
+        const supabase = createClient(SUPABASE_URL, SUPABASE_UPLOAD_KEY, {
+          auth: { persistSession: false, autoRefreshToken: false },
         });
+
+        const { error: uploadError } = await supabase.storage
+          .from("pitch-videos")
+          .uploadToSignedUrl(signedUpload.path, signedUpload.token, file, {
+            cacheControl: "3600",
+            contentType: file.type,
+          });
+
+        if (uploadError) {
+          setState({
+            kind: "error",
+            message: uploadError.message,
+          });
+          return;
+        }
 
         setState({ kind: "done", url: signedUpload.publicUrl, name: file.name });
         onChange(signedUpload.publicUrl);
@@ -210,6 +190,7 @@ export function VideoUpload({ value, onChange, error }: Props) {
   const handleChange = useCallback(
     (e: React.ChangeEvent<HTMLInputElement>) => {
       const file = e.target.files?.[0];
+      e.currentTarget.value = "";
       if (file) processFile(file);
     },
     [processFile],
@@ -230,7 +211,16 @@ export function VideoUpload({ value, onChange, error }: Props) {
         }}
         onDragLeave={() => setDragOver(false)}
         onDrop={handleDrop}
-        onClick={() => state.kind !== "done" && inputRef.current?.click()}
+        onClick={() => {
+          if (
+            state.kind === "done" ||
+            state.kind === "validating" ||
+            state.kind === "uploading"
+          ) {
+            return;
+          }
+          inputRef.current?.click();
+        }}
         className={cn(
           "relative flex min-h-[200px] cursor-pointer flex-col items-center justify-center gap-3 rounded-xl border-2 border-dashed p-6 text-center transition-colors",
           dragOver
@@ -283,18 +273,14 @@ export function VideoUpload({ value, onChange, error }: Props) {
           <div className="w-full max-w-xs space-y-3">
             <div className="flex items-center justify-between text-xs text-[color:var(--color-brand-cream)]/60">
               <span>Uploading&hellip;</span>
-              <span className="font-[family-name:var(--font-mono)]">
-                {state.progress}%
-              </span>
             </div>
             <div className="h-2 w-full rounded-full bg-white/10 overflow-hidden">
               <div
-                className="h-full rounded-full bg-[var(--color-brand-accent)] transition-[width] duration-300"
-                style={{ width: `${state.progress}%` }}
+                className="h-full w-1/2 rounded-full bg-[var(--color-brand-accent)] animate-pulse"
               />
             </div>
             <p className="text-[10px] text-center text-[color:var(--color-brand-cream)]/40 font-[family-name:var(--font-mono)] uppercase tracking-wider">
-              Upload Progress: {state.progress}%
+              Keep this tab open
             </p>
           </div>
         )}

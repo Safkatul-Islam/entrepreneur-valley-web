@@ -176,6 +176,7 @@ export function PitcherForm({ onSuccess }: Props) {
             required
             error={errors.videoUrl?.message}
             dark
+            asLabel={false}
           >
             <Controller
               name="videoUrl"
