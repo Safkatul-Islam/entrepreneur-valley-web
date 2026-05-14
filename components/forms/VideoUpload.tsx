@@ -136,6 +136,7 @@ export function VideoUpload({ value, onChange, error }: Props) {
 
         const xhr = new XMLHttpRequest();
         xhr.open("POST", signedUpload.uploadUrl);
+        xhr.setRequestHeader("x-upsert", "false");
 
         xhr.upload.onprogress = (e) => {
           if (e.lengthComputable) {
@@ -149,7 +150,17 @@ export function VideoUpload({ value, onChange, error }: Props) {
         await new Promise<void>((resolve, reject) => {
           xhr.onload = () => {
             if (xhr.status < 200 || xhr.status >= 300) {
-              reject(new Error(`Upload failed (${xhr.status})`));
+              let message = `Upload failed (${xhr.status})`;
+              try {
+                const response = JSON.parse(xhr.responseText) as {
+                  error?: string;
+                  message?: string;
+                };
+                message = response.message ?? response.error ?? message;
+              } catch {
+                if (xhr.responseText) message = xhr.responseText;
+              }
+              reject(new Error(message));
               return;
             }
             resolve();
@@ -160,8 +171,14 @@ export function VideoUpload({ value, onChange, error }: Props) {
 
         setState({ kind: "done", url: signedUpload.publicUrl, name: file.name });
         onChange(signedUpload.publicUrl);
-      } catch {
-        setState({ kind: "error", message: "Upload failed. Please try again." });
+      } catch (e) {
+        setState({
+          kind: "error",
+          message:
+            e instanceof Error
+              ? e.message
+              : "Upload failed. Please try again.",
+        });
       }
     },
     [onChange],
