@@ -22,6 +22,10 @@ const MAX_FILE_SIZE = 100 * 1024 * 1024;
 const VIDEO_METADATA_TIMEOUT_MS = 10_000;
 const ALLOWED_TYPES = new Set(["video/mp4", "video/quicktime", "video/webm"]);
 
+type SignedUploadResponse =
+  | { ok: true; uploadUrl: string; publicUrl: string; path: string }
+  | { ok: false; error: string };
+
 function getVideoDuration(file: File): Promise<number> {
   return new Promise((resolve, reject) => {
     const video = document.createElement("video");
@@ -96,11 +100,42 @@ export function VideoUpload({ value, onChange, error }: Props) {
       setState({ kind: "uploading", progress: 0 });
 
       try {
+        const signedUploadRes = await fetch("/api/upload-video", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            fileName: file.name,
+            fileType: file.type,
+            fileSize: file.size,
+          }),
+        });
+
+        const signedUpload = (await signedUploadRes
+          .json()
+          .catch(() => null)) as SignedUploadResponse | null;
+
+        if (!signedUploadRes.ok || !signedUpload) {
+          setState({
+            kind: "error",
+            message: "Upload could not start. Please try again.",
+          });
+          return;
+        }
+
+        if (!signedUpload.ok) {
+          setState({
+            kind: "error",
+            message: signedUpload.error,
+          });
+          return;
+        }
+
         const formData = new FormData();
-        formData.append("video", file);
+        formData.append("cacheControl", "3600");
+        formData.append("", file);
 
         const xhr = new XMLHttpRequest();
-        xhr.open("POST", "/api/upload-video");
+        xhr.open("POST", signedUpload.uploadUrl);
 
         xhr.upload.onprogress = (e) => {
           if (e.lengthComputable) {
@@ -111,34 +146,20 @@ export function VideoUpload({ value, onChange, error }: Props) {
           }
         };
 
-        const result = await new Promise<{ ok: boolean; url?: string; error?: string }>(
-          (resolve, reject) => {
-            xhr.onload = () => {
-              if (xhr.status < 200 || xhr.status >= 300) {
-                reject(new Error(`Upload failed (${xhr.status})`));
-                return;
-              }
-              try {
-                resolve(JSON.parse(xhr.responseText));
-              } catch {
-                reject(new Error("Invalid response"));
-              }
-            };
-            xhr.onerror = () => reject(new Error("Network error"));
-            xhr.send(formData);
-          },
-        );
+        await new Promise<void>((resolve, reject) => {
+          xhr.onload = () => {
+            if (xhr.status < 200 || xhr.status >= 300) {
+              reject(new Error(`Upload failed (${xhr.status})`));
+              return;
+            }
+            resolve();
+          };
+          xhr.onerror = () => reject(new Error("Network error"));
+          xhr.send(formData);
+        });
 
-        if (!result.ok || !result.url) {
-          setState({
-            kind: "error",
-            message: result.error ?? "Upload failed. Please try again.",
-          });
-          return;
-        }
-
-        setState({ kind: "done", url: result.url, name: file.name });
-        onChange(result.url);
+        setState({ kind: "done", url: signedUpload.publicUrl, name: file.name });
+        onChange(signedUpload.publicUrl);
       } catch {
         setState({ kind: "error", message: "Upload failed. Please try again." });
       }
