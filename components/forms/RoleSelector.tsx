@@ -29,7 +29,7 @@ export function RoleSelector({ onPitch }: Props) {
           <Users className="size-6" />
         </div>
         <div>
-          <h3 className="text-xl font-semibold text-[color:var(--color-brand-primary-dark)]">
+          <h3 className="title-role-card text-[color:var(--color-brand-primary-dark)]">
             Just Attending
           </h3>
           <p className="mt-2 text-sm leading-relaxed text-[color:var(--color-ink-soft)]">
@@ -57,7 +57,7 @@ export function RoleSelector({ onPitch }: Props) {
           <Mic className="size-6" />
         </div>
         <div>
-          <h3 className="text-xl font-semibold text-[color:var(--color-brand-primary-dark)]">
+          <h3 className="title-role-card text-[color:var(--color-brand-primary-dark)]">
             I&rsquo;ll Be Pitching
           </h3>
           <p className="mt-2 text-sm leading-relaxed text-[color:var(--color-ink-soft)]">

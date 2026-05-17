@@ -55,7 +55,7 @@ export default function RegisterPage() {
         <div className="eyebrow text-[color:var(--color-brand-cream)]/40">
           Registration
         </div>
-        <h1 className="display-lg mt-3 text-balance text-[color:var(--color-brand-cream)]">
+        <h1 className="title-event-jakarta mt-3 text-balance text-[color:var(--color-brand-cream)]">
           Sharks&rsquo;{" "}
           <em className="not-italic text-[var(--color-brand-accent)]">
             Valley.

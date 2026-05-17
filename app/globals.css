@@ -32,6 +32,7 @@
   --color-line: rgba(0, 18, 24, 0.09);
 
   --font-display: var(--font-instrument-serif), ui-serif, Georgia, serif;
+  --font-jakarta: var(--font-plus-jakarta), ui-sans-serif, system-ui, -apple-system, sans-serif;
   --font-sans: var(--font-geist-sans), ui-sans-serif, system-ui, -apple-system, sans-serif;
   --font-mono: var(--font-geist-mono), ui-monospace, monospace;
   --font-condensed: var(--font-anton), "Bebas Neue", ui-sans-serif, system-ui;
@@ -186,6 +187,30 @@
     letter-spacing: 0.01em;
     text-transform: uppercase;
     font-weight: 400;
+  }
+
+  .title-home-jakarta {
+    font-family: var(--font-jakarta);
+    font-size: clamp(2.625rem, 7vw + 0.25rem, 7rem);
+    line-height: 1.05;
+    letter-spacing: -0.0476em;
+    font-weight: 800;
+  }
+
+  .title-event-jakarta {
+    font-family: var(--font-jakarta);
+    font-size: clamp(3.5rem, 7vw + 0.25rem, 5.5rem);
+    line-height: 0.95;
+    letter-spacing: -0.0536em;
+    font-weight: 800;
+  }
+
+  .title-role-card {
+    font-family: var(--font-jakarta);
+    font-size: 1.375rem;
+    line-height: 1.08;
+    letter-spacing: -0.0227em;
+    font-weight: 700;
   }
 
   .eyebrow {

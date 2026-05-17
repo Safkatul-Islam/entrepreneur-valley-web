@@ -81,7 +81,7 @@ export function Hero() {
           Entrepreneur&rsquo;s Valley &middot; SMC &middot; est. 2024
         </motion.div>
 
-        <h1 className="display-xl mt-5 text-balance text-[color:var(--color-brand-primary-dark)]">
+        <h1 className="title-home-jakarta mt-5 text-balance text-[color:var(--color-brand-primary-dark)]">
           {HEADLINE.map((word, i) => (
             <span
               key={word + i}
@@ -98,7 +98,7 @@ export function Hero() {
                 }}
               >
                 {i === HEADLINE.length - 1 ? (
-                  <em className="not-italic font-[family-name:var(--font-display)] italic text-[color:var(--color-brand-accent-deep)]">
+                  <em className="not-italic text-[color:var(--color-brand-accent-deep)]">
                     {word}
                   </em>
                 ) : (

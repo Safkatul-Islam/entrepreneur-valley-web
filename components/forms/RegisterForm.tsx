@@ -24,14 +24,6 @@ export function RegisterForm() {
           exit={{ opacity: 0, y: -12 }}
           transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
         >
-          <div className="mb-8 text-center">
-            <h2 className="font-[family-name:var(--font-display)] text-3xl md:text-4xl text-[color:var(--color-brand-cream)]">
-              Registration Role Selection
-            </h2>
-            <p className="mt-3 text-sm text-[color:var(--color-brand-cream)]/50">
-              Choose your path for Sharks&rsquo; Valley
-            </p>
-          </div>
           <RoleSelector onPitch={() => setStep("form")} />
         </motion.div>
       )}

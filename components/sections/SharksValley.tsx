@@ -32,7 +32,7 @@ export function SharksValley() {
 
       <div className="container-page relative">
         <ScrollReveal>
-          <h2 className="display-condensed chrome-text text-center">
+          <h2 className="title-event-jakarta chrome-text text-center">
             Sharks&rsquo; Valley
             <br />
             Event Details
