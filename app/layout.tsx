@@ -88,8 +88,8 @@ export const metadata: Metadata = {
   },
   alternates: { canonical: SITE_URL },
   icons: {
-    icon: [{ url: "/logo-ev-on-green.png", type: "image/png" }],
-    apple: [{ url: "/logo-ev-on-green.png", type: "image/png" }],
+    icon: [{ url: "/logo-ev.png", type: "image/png" }],
+    apple: [{ url: "/logo-ev.png", type: "image/png" }],
   },
 };
 
