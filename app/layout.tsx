@@ -87,6 +87,10 @@ export const metadata: Metadata = {
     description: "Where future founders meet.",
   },
   alternates: { canonical: SITE_URL },
+  icons: {
+    icon: [{ url: "/logo-ev-on-green.png", type: "image/png" }],
+    apple: [{ url: "/logo-ev-on-green.png", type: "image/png" }],
+  },
 };
 
 export default function RootLayout({
