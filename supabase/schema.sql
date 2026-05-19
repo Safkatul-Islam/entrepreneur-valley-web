@@ -77,8 +77,12 @@ end $$;
 -- Create via Supabase dashboard or CLI:
 --   Storage → New bucket → "pitch-videos"
 --   - Public: ON (the app returns public review links after upload)
---   - Max file size: 100 MB
+--   - Max file size: 50 MB
 --   - Allowed MIME types: video/mp4, video/quicktime, video/webm
+--   - Storage Settings → Global file size limit: 50 MB on the Free plan
+--
+-- Supabase Free projects currently cap the global Storage upload limit at
+-- 50 MB, so larger pitch videos require Pro or higher.
 --
 -- All uploads go through the Next.js API route using the service-role key,
 -- so no anon/authenticated insert policies are needed. Public read access is

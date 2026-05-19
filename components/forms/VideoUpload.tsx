@@ -4,6 +4,13 @@ import { useCallback, useRef, useState } from "react";
 import { createClient } from "@supabase/supabase-js";
 import { Upload, CheckCircle, AlertCircle, X, Film } from "lucide-react";
 import { cn } from "@/lib/utils";
+import {
+  PITCH_VIDEO_ALLOWED_FORMATS_LABEL,
+  PITCH_VIDEO_ALLOWED_TYPES,
+  PITCH_VIDEO_MAX_DURATION_SECONDS,
+  PITCH_VIDEO_MAX_FILE_SIZE_BYTES,
+  PITCH_VIDEO_MAX_FILE_SIZE_MB,
+} from "@/lib/upload-limits";
 
 interface Props {
   value: string;
@@ -18,10 +25,8 @@ type UploadState =
   | { kind: "done"; url: string; name: string }
   | { kind: "error"; message: string };
 
-const MAX_DURATION_SECONDS = 60;
-const MAX_FILE_SIZE = 100 * 1024 * 1024;
 const VIDEO_METADATA_TIMEOUT_MS = 10_000;
-const ALLOWED_TYPES = new Set(["video/mp4", "video/quicktime", "video/webm"]);
+const ALLOWED_TYPES = new Set<string>(PITCH_VIDEO_ALLOWED_TYPES);
 const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL;
 const SUPABASE_UPLOAD_KEY =
   process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY ??
@@ -30,6 +35,14 @@ const SUPABASE_UPLOAD_KEY =
 type SignedUploadResponse =
   | { ok: true; token: string; publicUrl: string; path: string }
   | { ok: false; error: string };
+
+function getUploadErrorMessage(message: string) {
+  if (/exceeded.*maximum.*allowed.*size/i.test(message)) {
+    return `This video is larger than the current storage limit. The form allows ${PITCH_VIDEO_MAX_FILE_SIZE_MB} MB, so please contact the team if this keeps happening.`;
+  }
+
+  return message || "Upload failed. Please try again.";
+}
 
 function getVideoDuration(file: File): Promise<number> {
   return new Promise((resolve, reject) => {
@@ -78,12 +91,15 @@ export function VideoUpload({ value, onChange, error }: Props) {
       if (!ALLOWED_TYPES.has(file.type)) {
         setState({
           kind: "error",
-          message: "Unsupported format. Use MP4, MOV, or WebM.",
+          message: `Unsupported format. Use ${PITCH_VIDEO_ALLOWED_FORMATS_LABEL}.`,
         });
         return;
       }
-      if (file.size > MAX_FILE_SIZE) {
-        setState({ kind: "error", message: "File too large. Max 100 MB." });
+      if (file.size > PITCH_VIDEO_MAX_FILE_SIZE_BYTES) {
+        setState({
+          kind: "error",
+          message: `File too large. Max ${PITCH_VIDEO_MAX_FILE_SIZE_MB} MB.`,
+        });
         return;
       }
 
@@ -91,7 +107,7 @@ export function VideoUpload({ value, onChange, error }: Props) {
 
       try {
         const duration = await getVideoDuration(file);
-        if (duration > MAX_DURATION_SECONDS + 1) {
+        if (duration > PITCH_VIDEO_MAX_DURATION_SECONDS + 1) {
           setState({
             kind: "error",
             message: `Video is ${Math.ceil(duration)}s. Please keep it under 1 minute.`,
@@ -157,7 +173,7 @@ export function VideoUpload({ value, onChange, error }: Props) {
         if (uploadError) {
           setState({
             kind: "error",
-            message: uploadError.message,
+            message: getUploadErrorMessage(uploadError.message),
           });
           return;
         }
@@ -254,7 +270,10 @@ export function VideoUpload({ value, onChange, error }: Props) {
                 1 min max, YC-style
               </div>
               <p className="mt-1 text-xs text-[color:var(--color-brand-cream)]/40">
-                MP4, MOV, or WebM &middot; 100 MB limit
+                {PITCH_VIDEO_ALLOWED_FORMATS_LABEL} &middot;{" "}
+                <span className="font-semibold text-[var(--color-brand-accent)]">
+                  {PITCH_VIDEO_MAX_FILE_SIZE_MB} MB max
+                </span>
               </p>
             </div>
           </>

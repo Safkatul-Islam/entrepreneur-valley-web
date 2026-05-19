@@ -1,17 +1,18 @@
 import { NextResponse, type NextRequest } from "next/server";
 import { getSupabaseAdmin } from "@/lib/supabase";
 import { rateLimitDb } from "@/lib/rate-limit-db";
+import {
+  PITCH_VIDEO_ALLOWED_FORMATS_LABEL,
+  PITCH_VIDEO_ALLOWED_TYPES,
+  PITCH_VIDEO_MAX_FILE_SIZE_BYTES,
+  PITCH_VIDEO_MAX_FILE_SIZE_MB,
+} from "@/lib/upload-limits";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
 const RATE_LIMIT = { limit: 5, windowMs: 60 * 60 * 1000 };
-const MAX_FILE_SIZE = 100 * 1024 * 1024; // 100 MB
-const ALLOWED_TYPES = new Set([
-  "video/mp4",
-  "video/quicktime",
-  "video/webm",
-]);
+const ALLOWED_TYPES = new Set<string>(PITCH_VIDEO_ALLOWED_TYPES);
 const BUCKET = "pitch-videos";
 
 interface ErrorResponse {
@@ -68,14 +69,20 @@ export async function POST(
 
   if (!ALLOWED_TYPES.has(body.fileType)) {
     return err(
-      { ok: false, error: "Unsupported format. Please upload MP4, MOV, or WebM." },
+      {
+        ok: false,
+        error: `Unsupported format. Please upload ${PITCH_VIDEO_ALLOWED_FORMATS_LABEL}.`,
+      },
       { status: 400 },
     );
   }
 
-  if (body.fileSize > MAX_FILE_SIZE) {
+  if (body.fileSize > PITCH_VIDEO_MAX_FILE_SIZE_BYTES) {
     return err(
-      { ok: false, error: "File too large. Maximum size is 100 MB." },
+      {
+        ok: false,
+        error: `File too large. Maximum size is ${PITCH_VIDEO_MAX_FILE_SIZE_MB} MB.`,
+      },
       { status: 400 },
     );
   }

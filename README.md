@@ -33,7 +33,9 @@ Visit `http://localhost:3000`.
 
 1. Create a new Supabase project (free tier is fine).
 2. Open SQL editor, paste and run `supabase/schema.sql`.
-3. Copy `Project URL` and `service_role` key into `.env.local` and the Vercel project env vars.
+3. Create the `pitch-videos` Storage bucket as public with a 50 MB bucket limit and allowed MIME types `video/mp4`, `video/quicktime`, and `video/webm`.
+4. Keep the app upload limit at 50 MB while the Supabase project is on the Free plan. Supabase Free projects cap the global Storage upload limit at 50 MB.
+5. Copy `Project URL` and `service_role` key into `.env.local` and the Vercel project env vars.
 
 The service-role key is a secret — never expose it to the client. The `lib/supabase.ts` module throws if it's imported from a client bundle.
 
